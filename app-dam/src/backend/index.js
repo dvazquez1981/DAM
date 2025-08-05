@@ -3,8 +3,10 @@ var PORT    = 3000;
 
 var express = require('express')
 var cors = require('cors')
+const  awdb=require('./bd/awdb.js');
 
-const routerDispositivos = require('./dispositivos/index')
+
+//const routerDispositivos = require('./dispositivos/index')
 
 var app = express();
 
@@ -20,8 +22,13 @@ app.use(express.static('/home/node/app/static/'));
 
 app.use(cors(corsOptions))
 
-//=======[ Main module code ]==================================================
+const rutasDevice = require( './rutas/routesDevice.js')
+//ruta
+app.use(rutasDevice);
+// to serve static files
 
+//=======[ Main module code ]==================================================
+/*
 app.all('/secreto', function (req, res, next) {
     console.log(req.method)
     res.send('Secreto').status(200)
@@ -45,7 +52,7 @@ var cb2 = function (req, res, next) {
 app.get('/', [cb0, cb1, cb2]);
 
 app.use(routerDispositivos)
-
+*/
 app.listen(PORT, function(req, res) {
     console.log("NodeJS API running correctly");
 });

@@ -39,22 +39,26 @@ services:
             -                    mysql-server
         ports:
             -                    "8001:80"
-
     node-backend:
         build:
-          context:               ./src/backend
-          dockerfile:            Dockerfile
-        container_name:          node-backend
+            context: ./src/backend
+            dockerfile: Dockerfile
+        container_name: node-backend
+        working_dir: /src/backend
         volumes:
-            -                    ./src/backend:/src/backend
-            -                    ./src/frontend:/home/node/app/static
+            - ./src/backend:/src/backend
         networks:
-            -                    app-fullstack-net
+            - app-fullstack-net
         depends_on:
-            -                    mysql-server
+            - mysql-server
         ports: 
-            -                    "8000:3000"
-        command:                 nodemon index.js -L
+            - "8000:3000"
+        command: >
+            sh -c "npm install && nodemon -L index.js"
+
+
+
+                                
 
 networks:
     app-fullstack-net:
