@@ -6,7 +6,7 @@ async function getAll(req, res) {
     try {
 
         console.log('Obtengo todas las mediciones')
-        const m = await Medicion.find(); 
+        const m = await Medicion.findAll();
        
    
     if (m) {
