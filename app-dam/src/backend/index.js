@@ -24,12 +24,14 @@ const rutasDevice = require( './rutas/routesDevice.js')
 const rutasMedicion = require( './rutas/routesMedicion.js')
 const rutasElectrovalvula = require( './rutas/routesElectrovalvula.js')
 const rutasLog_Riego = require( './rutas/routesLog_Riego.js')
+const rutasUsuario= require('./rutas/routesUsuario.js')
 
 //ruta
 app.use(rutasDevice);
 app.use(rutasMedicion);
 app.use(rutasElectrovalvula);
 app.use(rutasLog_Riego);
+app.use(rutasUsuario);
 
 
 app.listen(PORT, function(req, res) {
