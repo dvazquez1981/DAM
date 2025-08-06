@@ -23,9 +23,9 @@ async function getAll(req, res) {
 
 async function getOne(req, res) {
   const { dispositivoId } = req.params;
-  console.log("Get device id: " + dispositivoId);
+  console.log("get device id: " + dispositivoId);
 
-if (!(dispositivoId)) {
+if (dispositivoId===undefined) {
     console.log('dispositivoId es obligatorios');
     return res.status(400).json({
       message: 'dispositivoId es obligatorio',
@@ -33,6 +33,16 @@ if (!(dispositivoId)) {
     });
   }
 
+  const numeroDispositivoId= parseInt(dispositivoId);
+  if( isNaN(numeroDispositivoId)  )
+  {
+    console.log('el valor de dispositivoId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de dispositivoId no es un numero',
+    status: 0,
+    });
+  }
+  
 
   try {
     const DeviceFound = await Dispositivo.findOne({
@@ -58,55 +68,44 @@ async function crearDevice(req, res) {
   const { nombre, ubicacion, electrovalvulaId} = req.body;
   console.log("nombre: " + nombre + " ubicacion: " + ubicacion + " electrovalvulaId: " + electrovalvulaId);
 
+
   
-   if(!(nombre)) 
+   if(nombre===undefined || ubicacion===undefined  || electrovalvulaId===undefined) 
   {
-    console.log('el valor de nombre debe estar definido.');
+    console.log('el valor de nombre, ubicacion y electrovalvulaid son obligatorios.');
     return res.status(400).json({
-      message: 'el valor de nombre debe estar definido.',
+      message: 'el valor de nombre, ubicacion y electrovalvulaid son obligatorios.',
       status: 0,
     });
   }
   
 
-
-  if(!(electrovalvulaId)) 
+ const numeroElectrovalvulaId = parseInt(electrovalvulaId );
+  if( isNaN(numeroElectrovalvulaId)  )
   {
-    console.log('el valor de ElectrovalvulaId debe estar definido.');
+    console.log('el valor de electrovalvulaId no es un numero');
     return res.status(400).json({
-      message: 'el valor de ElectrovalvulaId debe estar definido.',
-      status: 0,
+    message: 'el valor de electrovalvulaId no es un numero',
+    status: 0,
     });
   }
   
-
 try {
     
     const existingElectrovalvula= await Electrovalvula.findOne({
-      where: { electrovalvulaId: electrovalvulaId }
+      where: { electrovalvulaId: numeroElectrovalvulaId }
     });
     
     if (!existingElectrovalvula) {
-        console.log('la electrovalvula: ' + electrovalvulaId +' no existe.');
+        console.log('la electrovalvula: ' + numeroElectrovalvulaId +' no existe.');
       return res.status(409).json({
-        message: 'la electrovalvula: ' + electrovalvulaId +' no existe.',
+        message: 'la electrovalvula: ' + numeroElectrovalvulaId+' no existe.',
         status: 0,
       });
     }
 
 
-  } catch (error) {
-    console.error('Error al obtener la electrovalvula:', error);
-    return res.status(500).json({
-      message: 'Ocurrió un error inesperado.',
-      status: 0,
-      error: error.message,
-    });
-  }
 
-
-
-  try {
     const existingDevice = await Dispositivo.findOne({
       where: { nombre: nombre}
     });
@@ -121,9 +120,8 @@ try {
 
     const newDevice = await Dispositivo.create({
       nombre: nombre,
-      description: description,
       ubicacion:ubicacion,
-      electrovalvulaId:electrovalvulaId
+      electrovalvulaId:numeroElectrovalvulaId
 
     });
 
@@ -149,7 +147,7 @@ async function deleteDevice(req, res) {
 
 
 
-  if (!(dispositivoId)) {
+  if (dispositivoId==undefined) {
     console.log('dispositivoId es obligatorios');
     return res.status(400).json({
       message: 'dispositivoId es obligatorios',
@@ -157,16 +155,27 @@ async function deleteDevice(req, res) {
     });
   }
 
+
+  const numeroDispositivoId= parseInt(dispositivoId);
+  if( isNaN(numeroDispositivoId)  )
+  {
+    console.log('el valor de dispositivoId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de dispositivoId no es un numero',
+    status: 0,
+    });
+  }
+
   try {
     const deletedRecord = await Dispositivo.destroy({
-      where: { dispositivoId: dispositivoId }
+      where: { dispositivoId: numeroDispositivoId }
     });
 
     if (deletedRecord > 0) {
-      console.log("id: " + dispositivoId + " se borró correctamente");
+      console.log("id: " + numeroDispositivoId + " se borró correctamente");
       res.status(200).json({ message: "Se borró correctamente" });
     } else {
-      console.log("id: " + dispositivoId + " no existe registro");
+      console.log("id: " + numeroDispositivoId + " no existe registro");
       res.status(404).json({ message: "No existe registro" });
     }
 
@@ -186,65 +195,77 @@ async function updateDevice(req, res) {
 
 
    
-  if(!(electrovalvulaId) )
+  if(dispositivoId===undefined ) 
   {
-    console.log('el valor de ElectrovalvulaId no puede ser nulo');
+    console.log('el valor de dispositivoId es obligatorio.');
     return res.status(400).json({
-      message: 'el valor de ElectrovalvulaId no puede ser nulo',
+      message: 'el valor de dispositivoId es obligatorio.',
       status: 0,
     });
   }
   
+  const numeroDispositivoId= parseInt(dispositivoId);
+  if( isNaN(numeroDispositivoId)  )
+  {
+    console.log('el valor de dispositivoId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de dispositivoId no es un numero',
+    status: 0,
+    });
+  }
+  
+ var numeroElectrovalvulaId=undefined;
+  if(electrovalvulaId!==undefined)
+  {
+  numeroElectrovalvulaId = parseInt(electrovalvulaId );
+  if( isNaN(numeroElectrovalvulaId)  )
+  {
+    console.log('el valor de electrovalvulaId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de electrovalvulaId no es un numero',
+    status: 0,
+    });
+  }
+}
+
+
 
 try {
     
     const existingElectrovalvula= await Electrovalvula.findOne({
-      where: { electrovalvulaId: electrovalvulaId }
+      where: { electrovalvulaId: numeroElectrovalvulaId }
     });
     
     if (!existingElectrovalvula) {
-        console.log('la electrovalvula: ' + electrovalvulaId +' no existe.');
+        console.log('la electrovalvula: ' + numeroElectrovalvulaId +' no existe.');
       return res.status(409).json({
-        message: 'la electrovalvula: ' + electrovalvulaId +' no existe.',
+        message: 'la electrovalvula: ' + numeroElectrovalvulaId +' no existe.',
         status: 0,
       });
     }
 
-
-  } catch (error) {
-    console.error('Error al obtener la electrovalvula:', error);
-    return res.status(500).json({
-      message: 'Ocurrió un error inesperado.',
-      status: 0,
-      error: error.message,
-    });
-  }
-
-
-
-
-  try {
+  
     const dv = await Dispositivo.findOne({
-      where: { dispositivoId: dispositivoId },
+      where: { dispositivoId: numeroDispositivoId },
       attributes: ['dispositivoId', 'nombre', 'ubicacion','electrovalvulaId']
     });
 
     if (!dv) {
-      console.log("dispositivoId: " + dispositivoId + " no encontrado");
+      console.log("dispositivoId: " + disposnumeroDispositivoIditivoId + " no encontrado");
       return res.status(404).json({ message: 'Dispositivo no encontrado.' });
     }
     
 
     await dv.update({
-      dispositivoId: dispositivoId,
+      dispositivoId: numeroDispositivoId,
       nombre: nombre !== undefined ? nombre : dv.nombre,
       ubicacion: ubicacion !== undefined ? ubicacion : dv.ubicacion,
-      electrovalvulaId: electrovalvulaId !== undefined ? electrovalvulaId : dv.electrovalvulaId
+      electrovalvulaId: numeroElectrovalvulaId !== undefined ? numeroElectrovalvulaId : dv.electrovalvulaId
 
     });
 
   
-    console.log("id: " +  dispositivoId + " se actualizó correctamente");
+    console.log("id: " +  numeroDispositivoId + " se actualizó correctamente");
     res.status(200).json({ message: 'Device se actualizó correctamente.' });
 
   } catch (error) {

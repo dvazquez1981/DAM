@@ -22,20 +22,30 @@ async function getAll(req, res) {
 
 async function getOne(req, res) {
   const { electrovalvulaId} = req.params;
-  console.log("Get device id: " + electrovalvulaId);
+  console.log("get electrovalvula id: " + electrovalvulaId);
 
-if (!(electrovalvulaId)) {
-    console.log('dispositivoId es obligatorios');
+if (electrovalvulaId===undefined) {
+    console.log('electrovalvulaId es obligatorios');
     return res.status(400).json({
-      message: 'dispositivoId es obligatorio',
+      message: 'electrovalvulaId es obligatorio',
       status: 0,
+    });
+  }
+
+  const numeroElectrovalvulaId= parseInt(electrovalvulaId);
+  if( isNaN(numeroElectrovalvulaId)  )
+  {
+    console.log('el valor de electrovalvulaId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de electrovalvulaId no es un numero',
+    status: 0,
     });
   }
 
 
   try {
     const ElectrovalvulaFound = await Electrovalvula.findOne({
-      where: { electrovalvulaId: electrovalvulaId }
+      where: { electrovalvulaId: numeroElectrovalvulaId}
     });
 
     if (ElectrovalvulaFound ) {
@@ -58,8 +68,9 @@ async function crearElectrovalvula(req, res) {
   const { nombre} = req.body;
   console.log("nombre: " + nombre);
 
+  
    
-  if(!(nombre)) 
+  if(nombre===undefined) 
   {
     console.log('el valor de nombre debe estar definido.');
     return res.status(400).json({
@@ -106,7 +117,7 @@ async function deleteElectrovalvula(req, res) {
   const {electrovalvulaId} = req.params;
 
 
-  if (!(electrovalvulaId)) {
+  if (electrovalvulaId===undefined) {
     console.log('electrovalvulaId es obligatorios');
     return res.status(400).json({
       message: 'electrovalvulaId es obligatorios',
@@ -114,9 +125,20 @@ async function deleteElectrovalvula(req, res) {
     });
   }
 
+  const numeroElectrovalvulaId= parseInt(electrovalvulaId);
+  if( isNaN(numeroElectrovalvulaId)  )
+  {
+    console.log('el valor de electrovalvulaId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de electrovalvulaId no es un numero',
+    status: 0,
+    });
+  }
+
+
   try {
     const deletedRecord = await Electrovalvula.destroy({
-      where: { electrovalvulaId: electrovalvulaId }
+      where: { electrovalvulaId: numeroElectrovalvulaId }
     });
 
     if (deletedRecord > 0) {
@@ -143,11 +165,30 @@ async function updateElectrovalvula(req, res) {
   const { nombre} = req.body;
   console.log("electrovalvulaId : " + electrovalvulaId  + " nombre: " + nombre );
 
+ if(electrovalvulaId===undefined ) 
+  {
+ console.log('electrovalvulaId es obligatorios');
+    return res.status(400).json({
+      message: 'electrovalvulaId es obligatorios',
+      status: 0,
+    });
+
+  }
+
+  const numeroElectrovalvulaId= parseInt(electrovalvulaId);
+  if( isNaN(numeroElectrovalvulaId)  )
+  {
+    console.log('el valor de electrovalvulaId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de electrovalvulaId no es un numero',
+    status: 0,
+    });
+  }
 
 
   try {
     const ev = await Electrovalvula.findOne({
-      where: { electrovalvulaId: electrovalvulaId },
+      where: { electrovalvulaId: numeroElectrovalvulaId },
       attributes: ['electrovalvulaId', 'nombre']
     });
 
@@ -158,7 +199,7 @@ async function updateElectrovalvula(req, res) {
     
 
     await ev.update({
-      electrovalvulaId: electrovalvulaId,
+      electrovalvulaId: numeroElectrovalvulaId,
       nombre: nombre !== undefined ? nombre : ev.nombre
 
     });

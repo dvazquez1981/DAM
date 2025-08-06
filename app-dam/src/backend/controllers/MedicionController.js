@@ -37,13 +37,25 @@ async function createMedicion(req, res) {
 
  
     // Validar que todos los campos requeridos están presentes
-    if (!dispositivoId || !fecha ||  !valor)  {
+    if (dispositivoId===undefined || fecha===undefined  ||  valor===undefined )  {
 
     console.log('dispositivoId, valor, fecha son obligatorios')
         return res.status(400).json({ message: 'dispositivoId, valor, fecha son obligatorios',
             status: 0 });
     }
 
+
+
+   const numeroDispositivoId= parseInt(dispositivoId);
+  if( isNaN(numeroDispositivoId)  )
+  {
+    console.log('el valor de dispositivoId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de dispositivoId no es un numero',
+    status: 0,
+    });
+  }
+    
    // Verificar que fecha sea una fecha válida
      const parsedDate = new Date(fecha);
      if (isNaN(parsedDate.getTime())) {
@@ -57,12 +69,10 @@ async function createMedicion(req, res) {
 
     try {
 
-        
-
 
     const DeviceFound = await Dispositivo.findOne({
         where: {
-           dispositivoId: dispositivoId
+           dispositivoId: numeroDispositivoId
         }
       });
 
@@ -76,15 +86,40 @@ async function createMedicion(req, res) {
      });
 
      }
-        // Crear el nueva medicion
-        const newMeasurement = Medicion.build({ fecha, valor, dispositivoId });
-        await newMeasurement.save();
+
+
+        const MedicionFound = await Medicion.findOne({
+        where: {
+           fecha: fecha,
+           dispositivoId: numeroDispositivoId
+        }
+      });
+
+
+     if (MedicionFound)
+     {    
+        console.log('La medicion ya existe.')
+        return res.status(422).json(
+            { message: 'La medicion ya existe.',
+            status: 0
+           
+     });
+
+     }
+
+       const newMeasurement = await Medicion.create({
+            fecha: fecha,
+            valor: valor,
+            dispositivoId: numeroDispositivoId
+        });
+
+         
         const insertedId = newMeasurement.medicionId;
-        console.log('Medicion creado con éxito id:'+insertedId )
+        console.log('Medicion creado con éxito id:'+ insertedId )
         //return { insertedId };
         return res.status(201).json(
             
-            { message: 'Medicion creado con éxito.',  status: 1, id_inserted:insertedId });
+        { message: 'Medicion creado con éxito.',  status: 1,data: sanitize(newMeasurement) });
             
     } catch (error) {
         console.error('Error al crear la medicion:', error);
@@ -95,18 +130,43 @@ async function createMedicion(req, res) {
 async function getAllByDeviceId(req,res)
     {
      var {dispositivoId}  = req.params;
-     console.log('Obtengo todas las mediciones del dispositivoId: '+dispositivoId)
+
+
+
+ // Validar que todos los campos requeridos están presentes
+    if (dispositivoId===undefined)  {
+
+    console.log('dispositivoId es obligatorio')
+        return res.status(400).json({ message: 'dispositivoId es obligatorio',
+            status: 0 });
+    }
+
+
+
+   const numeroDispositivoId= parseInt(dispositivoId);
+  if( isNaN(numeroDispositivoId)  )
+  {
+    console.log('el valor de dispositivoId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de dispositivoId no es un numero',
+    status: 0,
+    });
+  }
+
+
+
+     console.log('Obtengo todas las mediciones del dispositivoId: '+numeroDispositivoId)
         try {
     
             const DeviceFound = await Device.findOne({
                 where: {
-                    dispositivoId:dispositivoId
+                    dispositivoId:numeroDispositivoId
                 }
             });
     
             if(!DeviceFound){
               
-                console.log("dispositivoId: " + dispositivoId +  " no encontrado ")
+                console.log("dispositivoId: " + numeroDispositivoId +  " no encontrado ")
                 return res.status(404).json({
                     message: 'No se encuentra el Device.'      
                    
@@ -114,9 +174,9 @@ async function getAllByDeviceId(req,res)
              
             }
 
-            console.log("dispositivoId: " + dispositivoId + " encontrado ")
+            console.log("dispositivoId: " + numeroDispositivoId + " encontrado ")
 
-            const me = await Medicion.find( {dispositivoId: dispositivoId });
+            const me = await Medicion.find( {dispositivoId: numeroDispositivoId });
             if (me.length > 0) {
                 const sanitizedMeasurements = me.map(m => sanitize(JSON.parse(JSON.stringify(m))))
 
@@ -139,18 +199,28 @@ async function getOne(req, res) {
   const { medicionId } = req.params;
   console.log("Get medicionId: " + medicionId);
 
-if (!(medicionId)) {
-    console.log('medicionId es obligatorios');
+if (medicionId===undefined) {
+    console.log('medicionId es obligatorio');
     return res.status(400).json({
       message: 'medicionId es obligatorio',
       status: 0,
     });
   }
 
+   const numeroMedicionId= parseInt(medicionId);
+  if( isNaN(numeroMedicionId)  )
+  {
+    console.log('el valor de medicionId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de medicionId no es un numero',
+    status: 0,
+    });
+  }
+
 
   try {
     const MedicionFound = await Medicion.findOne({
-      where: { medicionId: medicionId }
+      where: { medicionId: numeroMedicionId }
     });
 
     if (MedicionFound) {
@@ -172,24 +242,35 @@ async function deleteMedicion(req, res) {
    const { medicionId } = req.params;
 
 
-  if (!(medicionId )) {
-    console.log('medicionId  es obligatorios');
+if (medicionId===undefined) {
+    console.log('medicionId es obligatorio');
     return res.status(400).json({
-      message: 'medicionId  es obligatorios',
+      message: 'medicionId es obligatorio',
       status: 0,
     });
   }
 
+   const numeroMedicionId= parseInt(medicionId);
+  if( isNaN(numeroMedicionId)  )
+  {
+    console.log('el valor de medicionId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de medicionId no es un numero',
+    status: 0,
+    });
+  }
+
+
   try {
     const deletedRecord = await Medicion.destroy({
-      where: { medicionId : medicionId  }
+      where: { medicionId : numeroMedicionId  }
     });
 
     if (deletedRecord > 0) {
-      console.log("id: " + medicionId  + " se borró correctamente");
+      console.log("id: " + numeroMedicionId  + " se borró correctamente");
       res.status(200).json({ message: "Se borró correctamente" });
     } else {
-      console.log("id: " + medicionId  + " no existe registro");
+      console.log("id: " + numeroMedicionId  + " no existe registro");
       res.status(404).json({ message: "No existe registro" });
     }
 
@@ -207,24 +288,36 @@ async function deleteMedicionByDeviceId(req, res) {
  console.log('Obtengo todas las mediciones del dispositivoId: '+dispositivoId)
 
 
-  if (!(dispositivoId)) {
+  if (dispositivoId===undefined) {
     console.log('dispositivoId  es obligatorios');
     return res.status(400).json({
       message: 'dispositivoId es obligatorios',
       status: 0,
     });
   }
+   const numeroDispositivoId= parseInt(dispositivoId);
+  if( isNaN(numeroDispositivoId)  )
+  {
+    console.log('el valor de dispositivoId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de dispositivoId no es un numero',
+    status: 0,
+    });
+  }
+
+
+
 
   try {
     const deletedRecord = await Medicion.destroy({
-      where: { dispositivoId : dispositivoId  }
+      where: { dispositivoId : numeroDispositivoId  }
     });
 
     if (deletedRecord > 0) {
-      console.log("id: " + dispositivoId + " se borró correctamente");
+      console.log("id: " + numeroDispositivoId + " se borró correctamente");
       res.status(200).json({ message: "Se borró correctamente" });
     } else {
-      console.log("id: " + dispositivoId  + " no existe registro");
+      console.log("id: " + numeroDispositivoId  + " no existe registro");
       res.status(404).json({ message: "No existe registro" });
     }
 
@@ -242,14 +335,30 @@ async function updateMedicion(req, res) {
   const { fecha, valor, dispositivoId } = req.body;
   console.log("update: medicionId : " + medicionId +" dispositivoId : " + dispositivoId +" fecha: " + fecha + " valor: " + valor);	
 
-   // Validar que todos los campos requeridos están presentes
-    if (!dispositivoId || !fecha ||  !valor)  {
+    
+  if(medicionId===undefined) 
+  {
+    console.log('el valor de medicionId es obligatorio.');
+    return res.status(400).json({
+      message: 'el valor de medicionId es obligatorio.',
+      status: 0,
+    });
+  }
+  
+  const numeroMedicionId= parseInt(medicionId);
+  if( isNaN(numeroMedicionId)  )
+  {
+    console.log('el valor de medicionId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de medicionId no es un numero',
+    status: 0,
+    });
+  }
 
-    console.log('dispositivoId, valor, fecha son obligatorios')
-        return res.status(400).json({ message: 'dispositivoId, valor, fecha son obligatorios',
-            status: 0 });
-    }
 
+
+  if(fecha!==undefined )
+  {
    // Verificar que fecha sea una fecha válida
      const parsedDate = new Date(fecha);
      if (isNaN(parsedDate.getTime())) {
@@ -260,7 +369,24 @@ async function updateMedicion(req, res) {
     });
      } 
 
-  
+    }
+
+  var  numeroDispositivoId=undefined
+  if (dispositivoId!==undefined) 
+  {
+    numeroDispositivoId= parseInt(dispositivoId);
+  if( isNaN(numeroDispositivoId)  )
+  {
+    console.log('el valor de dispositivoId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de dispositivoId no es un numero',
+    status: 0,
+    });
+  }
+  }
+
+
+
 
 
 try {
@@ -276,42 +402,29 @@ try {
         status: 0,
       });
     }
-
-
-  } catch (error) {
-    console.error('Error al obtener el dispositivo:', error);
-    return res.status(500).json({
-      message: 'Ocurrió un error inesperado.',
-      status: 0,
-      error: error.message,
-    });
-  }
-
-
-try {
-    
+ 
 
     const m = await Medicion.findOne({
-      where: { medicionId: medicionId  },
+      where: { medicionId: numeroMedicionId  },
       attributes: ['medicionId', 'fecha', 'valor','dispositivoId']
     });
 
     if (!m) {
-      console.log(" medicionId: " +  medicionId + " no encontrado");
+      console.log(" medicionId: " +  numeroMedicionId + " no encontrado");
       return res.status(404).json({ message: ' medicion no encontrada.' });
     }
     
 
     await m.update({
-      medicionId: medicionId,
+      medicionId: numeroMedicionId,
       fecha: fecha!== undefined ? fecha: m.fecha,
       valor:valor !== undefined ? valor : m.valor,
-      dispositivoId: dispositivoId !== undefined ? dispositivoId: m.dispositivoId
+      dispositivoId: numeroDispositivoId !== undefined ? numeroDispositivoId: m.dispositivoId
 
     });
 
   
-    console.log("id medicion: " +  medicionId + " se actualizó correctamente");
+    console.log("id medicion: " +  numeroMedicionId + " se actualizó correctamente");
     res.status(200).json({ message: 'medicion se actualizó correctamente.' });
 
   } catch (error) {

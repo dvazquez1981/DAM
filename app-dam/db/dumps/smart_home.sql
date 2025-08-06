@@ -115,10 +115,27 @@ INSERT INTO `Mediciones` (`medicionId`, `fecha`, `valor`, `dispositivoId`) VALUE
 (10, '2020-11-26 21:19:41', '61', 5),
 (11, '2020-11-26 21:19:41', '12', 2);
 
+
+CREATE TABLE `Usuario` (
+  `userId` int(11) NOT NULL,
+  `name` varchar(30) NOT NULL,
+  `password` varchar(256) NOT NULL,
+  `descrip` varchar(30) DEFAULT NULL,
+  `lastLogin` datetime DEFAULT NULL,
+  `token` varchar(512) DEFAULT NULL,
+  PRIMARY KEY (`userId`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+INSERT INTO `Usuario` (`userId`, `name`, `password`, `descrip`) VALUES
+(1, 'admin', 'admin', 'admin user');
+
+
+
 --
 -- Índices para tablas volcadas
 --
-
+ALTER TABLE `Usuario` 
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Indices de la tabla `Dispositivos`
 --

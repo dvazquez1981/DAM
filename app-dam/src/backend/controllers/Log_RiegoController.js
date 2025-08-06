@@ -25,7 +25,7 @@ async function getOne(req, res) {
   const {logRiegoId} = req.params;
   console.log("Get logRiegoId: " + logRiegoId)
 
-if (!(logRiegoId)) {
+if (logRiegoId===undefined) {
     console.log('logRiegoId es obligatorios');
     return res.status(400).json({
       message: 'logRiegoId es obligatorio',
@@ -33,10 +33,22 @@ if (!(logRiegoId)) {
     });
   }
 
+   const numeroLogRiegoId= parseInt(logRiegoId);
+  if( isNaN(numeroLogRiegoId)  )
+  {
+    console.log('el valor de LogRiegoId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de LogRiegoId no es un numero',
+    status: 0,
+    });
+  }
+
+
+
 
   try {
     const l= await Log_Riego.findOne({
-      where: { logRiegoId: logRiegoId }
+      where: { logRiegoId: numeroLogRiegoId }
     });
 
     if (l) {
@@ -59,7 +71,7 @@ async function crearLog_Riego(req, res) {
   console.log("ingreso: electrovalvulaId: " + electrovalvulaId+ " fecha: " +fecha + " apertura: "+apertura );
 
    
-  if(!apertura || !fecha || !electrovalvulaId) 
+  if(apertura===undefined || fecha===undefined || electrovalvulaId===undefined) 
   {
     console.log('los valores apertura, fecha y electrovalvulaid son obligatorios.');
     return res.status(400).json({
@@ -77,13 +89,25 @@ async function crearLog_Riego(req, res) {
         status: 0
     });
      } 
+
+  
+  const numeroElectrovalvulaId= parseInt(electrovalvulaId);
+  if( isNaN(numeroElectrovalvulaId)  )
+  {
+    console.log('el valor de electrovalvulaId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de electrovalvulaId no es un numero',
+    status: 0,
+    });
+  }
+
   
   const numeroApertura = parseInt(apertura);
-  if( isNaN(numeroApertura)  ||   !(numeroApertura==0 || numeroApertura==1) )
+  if( isNaN(numeroApertura)  || !(numeroApertura==0 || numeroApertura==1) )
   {
-    console.log('el valor de apertura esta mal definido');
+    console.log('el valor de apertura esta mal definido debe ser 0 o 1');
     return res.status(400).json({
-    message: 'el valor de apertura esta mal definido',
+    message: 'el valor de apertura esta mal definido debe ser 0 o 1',
     status: 0,
     });
   }
@@ -91,7 +115,7 @@ async function crearLog_Riego(req, res) {
 
   try {
       const existingElectrovalvula = await Electrovalvula.findOne({
-      where: {electrovalvulaId: electrovalvulaId}
+      where: {electrovalvulaId: numeroElectrovalvulaId}
     });
 
     if (!existingElectrovalvula) {
@@ -102,21 +126,10 @@ async function crearLog_Riego(req, res) {
       });
     }
 
-
-  } catch (error) {
-    console.error('Error al obtener la electrovalvula:', error);
-    return res.status(500).json({
-      message: 'Ocurrió un error inesperado.',
-      status: 0,
-      error: error.message,
-    });
-  }
-
-try {
     const existingLog_Riego = await Log_Riego.findOne({
      where: {
         fecha: fecha,
-        electrovalvulaId: electrovalvulaId
+        electrovalvulaId: numeroElectrovalvulaId
            }
     });
 
@@ -130,7 +143,7 @@ try {
 
     const newLog_Riego = await Log_Riego.create({
       fecha: fecha,
-      electrovalvulaId: electrovalvulaId,
+      electrovalvulaId:numeroElectrovalvulaId,
       apertura:apertura
     });
 
@@ -160,24 +173,34 @@ async function deleteLog_Riego(req, res) {
   const {logRiegoId} = req.params;
 
 
-  if (!(logRiegoId)) {
+ if (logRiegoId===undefined) {
     console.log('logRiegoId es obligatorios');
     return res.status(400).json({
-      message: 'logRiegoId es obligatorios',
+      message: 'logRiegoId es obligatorio',
       status: 0,
+    });
+  }
+
+   const numeroLogRiegoId= parseInt(logRiegoId);
+  if( isNaN(numeroLogRiegoId)  )
+  {
+    console.log('el valor de LogRiegoId no es un numero');
+    return res.status(400).json({
+    message: 'el valor de LogRiegoId no es un numero',
+    status: 0,
     });
   }
 
   try {
     const deletedRecord = await Log_Riego.destroy({
-      where: { elogRiegoId: logRiegoId }
+      where: { elogRiegoId: numeroLogRiegoId }
     });
 
     if (deletedRecord > 0) {
-      console.log("id: " + logRiegoId + " se borró correctamente");
+      console.log("id: " + numeroLogRiegoId + " se borró correctamente");
       res.status(200).json({ message: "Se borró correctamente" });
     } else {
-      console.log("id: " + logRiegoId + " no existe registro");
+      console.log("id: " + numeroLogRiegoId + " no existe registro");
       res.status(404).json({ message: "No existe registro" });
     }
 
@@ -194,10 +217,35 @@ async function deleteLog_Riego(req, res) {
 
 async function updateLog_Riego(req, res) {
   const { logRiegoId } = req.params;
-  const { apertura, fecha ,electrovalvulaId } = req.body;
+  const { apertura, fecha ,electrovalvulaId} = req.body;
   console.log("update logRiegoId: " +logRiegoId + " electrovalvulaId: " + electrovalvulaId+ " fecha: " + fecha + " apertura: "+apertura );
+  
+  if(logRiegoId===undefined) 
+  {
+    console.log('logRiegoId  es obligatorio.');
+    return res.status(400).json({
+      message: 'logRiegoId  es obligatorio.',
+      status: 0,
+    });
+  }
 
-   // Verificar que fecha sea una fecha válida
+
+  
+  numeroLogRiegoId= parseInt(logRiegoId);
+  if( isNaN(numeroLogRiegoId) )
+  {
+    console.log('numeroLogRiegoId debe ser un numero');
+    return res.status(400).json({
+    message: 'numeroLogRiegoId debe ser un numero',
+    status: 0,
+    });
+  }
+  
+
+  
+  if(fecha!==undefined)
+  {
+    // Verificar que fecha sea una fecha válida
   const parsedDate = new Date(fecha);
      if (isNaN(parsedDate.getTime())) {
           console.log('fecha no válida');
@@ -206,47 +254,67 @@ async function updateLog_Riego(req, res) {
         status: 0
     });
      } 
-  const numeroApertura = parseInt(apertura);
-  if( isNaN(numeroApertura)  ||   !(numeroApertura==0 || numeroApertura==1) )
+  }
+  
+  var numeroElectrovalvulaId=undefined;
+  if(electrovalvulaId!==undefined)
   {
-    console.log('el valor de apertura esta mal definido');
+   numeroElectrovalvulaId= parseInt(electrovalvulaId);
+  if( isNaN(numeroElectrovalvulaId) )
+  {
+    console.log('ElectrovalvulaId debe ser un numero');
     return res.status(400).json({
-    message: 'el valor de apertura esta mal definido',
+    message: 'ElectrovalvulaId debe ser un numero',
     status: 0,
     });
+  }
+  }
+
+  var numeroApertura=undefined;
+  if(apertura!==undefined)
+  {
+   numeroApertura= parseInt(apertura);
+  if( isNaN(numeroApertura)  ||   !(numeroApertura==0 || numeroApertura==1) )
+  {
+    console.log('el valor de apertura esta mal definido debe ser 0 o 1');
+    return res.status(400).json({
+    message: 'el valor de apertura esta mal definido debe ser 0 o 1',
+    status: 0,
+    });
+  }
   }
 
   try {
 
       const existingElectrovalvula= await Electrovalvula.findOne({
-      where: { electrovalvulaId: electrovalvulaId }
+      where: { electrovalvulaId: numeroElectrovalvulaId }
         });
     
         if (!existingElectrovalvula) {
-            console.log('la electrovalvula: ' + electrovalvulaId +' no existe.');
+            console.log('la electrovalvula: ' + numeroElectrovalvulaId +' no existe.');
           return res.status(409).json({
-           message: 'la electrovalvula: ' + electrovalvulaId +' no existe.',
+           message: 'la electrovalvula: ' + numeroElectrovalvulaId +' no existe.',
            status: 0,
          });
         }
 
       const l = await Log_Riego.findOne({
-      where: { logRiegoId: logRiegoId},
+      where: { logRiegoId: numeroLogRiegoId},
       attributes: ['logRiegoId', 'fecha',  'apertura', 'electrovalvulaId']
     });
 
        if (!l ) {
-      console.log("logRiegoId: " + logRiegoId+ " no encontrado");
+      console.log("logRiegoId: " + numeroLogRiegoId+ " no encontrado");
       return res.status(404).json({ message: "logRiegoId: " + logRiegoId+ " no encontrado" });
       }
     
 
     await l.update({
-      logRiegoId: logRiegoId,
+      logRiegoId: numeroLogRiegoId,
       nombre: nombre !== undefined ? nombre : l.nombre,
       fecha:fecha !== undefined ?   fecha:l.fecha,
       apertura:apertura !== undefined ?   apertura:l.apertura,
-      electrovalvulaId:electrovalvulaId  !== undefined ?   electrovalvulaId:l.electrovalvulaId
+      electrovalvulaId:numeroElectrovalvulaId  !== undefined ?   numeroElectrovalvulaId:l.electrovalvulaId
     });
 
   
