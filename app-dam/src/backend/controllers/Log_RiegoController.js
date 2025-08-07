@@ -4,7 +4,7 @@ const {sanitize}  = require('../utils/sanitize.js');
 
 async function getAll(req, res) {
   try {
-    console.log('Obtengo todos los dispositivos');
+    console.log('Obtengo todos los Log_Riego');
     const e = await Log_Riego.findAll();
     if (e) {
       res.status(200).json(sanitize(e));

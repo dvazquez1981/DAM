@@ -22,9 +22,6 @@ const Usuario= awdb.define('Usuario',{
     },
     lastLogin:{
         type: Sequelize.DATE,
-    },
-    token:{
-        type: DataTypes.STRING,
     }
 } , {
     tableName: 'Usuario',

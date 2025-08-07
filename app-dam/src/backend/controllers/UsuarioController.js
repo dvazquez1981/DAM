@@ -323,12 +323,12 @@ async function chequeoToken(req,res,next){
             return res.status(401).json({ message: 'Token no proporcionado.' });
         }
 
-        // Verificación del token de forma síncrona (lanza excepción si es inválido)
+
         const decoded = jwt.verify(token, JWT_SECRET);
 
         // Buscar usuario asociado
         const userFound = await Usuario.findOne({
-            where: { token: token }
+            where: { name: decoded.name }
         });
 
         if (!userFound) {

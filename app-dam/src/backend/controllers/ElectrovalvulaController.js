@@ -3,7 +3,7 @@ const {sanitize}  = require('../utils/sanitize.js');
 
 async function getAll(req, res) {
   try {
-    console.log('Obtengo todos los dispositivos');
+    console.log('Obtengo todos las electrovalvulas');
     const ev = await Electrovalvula.findAll();
     if (ev) {
       res.status(200).json(sanitize(ev));
