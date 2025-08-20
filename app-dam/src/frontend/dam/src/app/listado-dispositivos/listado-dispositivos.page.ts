@@ -1,61 +1,54 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton } from '@ionic/angular/standalone';
-import { interval, Observable, Subscription, fromEvent } from 'rxjs';
-import { DispositivoService } from '../services/dispositivo.service';
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonButton,
+  IonFooter
+} from '@ionic/angular/standalone'; // <-- asegúrate de incluirlos todos
+import { Router } from '@angular/router';
+import { DispositivoService, Dispositivo } from '../services/dispositivo.service';
 
 @Component({
   selector: 'app-listado-dispositivos',
   templateUrl: './listado-dispositivos.page.html',
   styleUrls: ['./listado-dispositivos.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButton]
+  imports: [
+    CommonModule,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    IonList,
+    IonItem,
+    IonLabel,     
+    IonButton,   
+    IonFooter     
+  ]
 })
-export class ListadoDispositivosPage implements OnInit, OnDestroy {
+export class ListadoDispositivosPage implements OnInit {
+  dispositivos: Dispositivo[] = [];
 
-  observable$: Observable<any>
-  // subscription: Subscription
-  dispositivos: any = []
-
-  mouseMove$ = fromEvent(document, 'mousemove')
-
-  constructor(public dispositivoService: DispositivoService) {
-    this.observable$ = interval(1000)
-    // this.subscription = this.observable$.subscribe((value) => {
-    //   console.log(value)
-    // })
-
-    // this.subscription = this.mouseMove$.subscribe((evt: any) => {
-    //   console.log(`Coords: ${evt.clientX} x ${evt.clientY} y`)
-    // })
-  }
-
-  // subscribe () {
-  //   this.subscription = this.mouseMove$.subscribe((evt: any) => {
-  //     console.log(`Coords: ${evt.clientX} x ${evt.clientY} y`)
-  //   })
-  // }
-
-  // unsubscribe () {
-  //   this.subscription.unsubscribe()
-  // }
+  constructor(private dispositivoService: DispositivoService, private router: Router) {}
 
   async ngOnInit() {
-    await this.dispositivoService.getDispositivos()
-      .then((res) => {
-        this.dispositivos = res
-        console.log(this.dispositivos)
-        console.log("La promesa resolvió")
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    // Acá pongo código que debería ejecutarse con this.dispositivos conteniendo un arreglo de dispositivos
-    console.log("Ejecución fuera de la promesa")
+    try {
+      this.dispositivos = await this.dispositivoService.getDispositivos();
+      console.log('Dispositivos:', this.dispositivos);
+    } catch (error) {
+      console.error('Error al cargar dispositivos:', error);
+    }
   }
 
-  ngOnDestroy() {
-    // this.subscription.unsubscribe()
-  }
+verDetalle(dispositivo: Dispositivo | any) {
+  
+  this.router.navigate(['/dispositivo', dispositivo.dispositivoId]);
 }
+}
+

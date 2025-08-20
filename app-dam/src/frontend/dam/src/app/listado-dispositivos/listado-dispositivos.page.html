@@ -1,16 +1,15 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>listado-dispositivos</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">listado-dispositivos</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
-
-<!-- <ion-button (click)="subscribe()">Subscribe</ion-button>
-<ion-button (click)="unsubscribe()">Unsubscribe</ion-button> -->
+<ion-list>
+  <ion-item *ngFor="let disp of dispositivos">
+    <ion-label>
+      {{ disp.dispositivoId }} - {{ disp.nombre }} - {{ disp.ubicacion }} - {{ disp.electrovalvulaId }}
+    </ion-label>
+    <ion-button
+      slot="end"
+      fill="outline"
+      size="small"
+      (click)="verDetalle(disp); $event.stopPropagation()"
+    >
+      Ver detalle
+    </ion-button>
+  </ion-item>
+</ion-list>
