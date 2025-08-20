@@ -17,13 +17,15 @@ export interface Medicion {
 })
 export class MedicionService {
   private baseUrl = 'http://localhost:8000/medicion';
+ 
 
   constructor(private http: HttpClient) {}
 
   // Obtener todas las mediciones de un dispositivo
   getMediciones(dispositivoId: number): Promise<Medicion[]> {
+    console.log("estoy")
     return firstValueFrom(
-      this.http.get<Medicion[]>(`${this.baseUrl}?dispositivoId=${dispositivoId}`).pipe(
+      this.http.get<Medicion[]>(`${this.baseUrl}/dispositivo/${dispositivoId}`).pipe(
         catchError(err => {
           console.error('Error al obtener mediciones', err);
           return throwError(() => err);

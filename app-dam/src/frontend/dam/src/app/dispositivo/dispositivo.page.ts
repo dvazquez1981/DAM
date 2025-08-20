@@ -6,6 +6,7 @@ import {
   IonList, IonItem, IonLabel,
   IonButton 
 } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { DispositivoService, Dispositivo } from '../services/dispositivo.service';
 import { ElectrovalvulaService, Electrovalvula } from '../services/electrovalvula.service';
@@ -37,17 +38,18 @@ import { LogRiegoService, LogRiego } from '../services/log-riego.service';
 
 export class DispositivoPage implements OnInit {
   dispositivo?: Dispositivo;
-  electrovalvula?: Electrovalvula;
-  ultimaMedicion?: Medicion;
+  electrovalvula: Electrovalvula = {} as Electrovalvula;
   logsRiego: LogRiego[] = [];
-  
+  ultimaMedicion: Medicion = {} as Medicion;
+
+
   constructor(
     private route: ActivatedRoute,
     private dispositivoService: DispositivoService,
     private electrovalvulaService: ElectrovalvulaService,
     private medicionService: MedicionService,
-    private logRiegoService: LogRiegoService
-
+    private logRiegoService: LogRiegoService,
+    private router: Router
 
 
   ) {}
@@ -78,37 +80,45 @@ export class DispositivoPage implements OnInit {
       }
     }
    
-  //Abro electroválvula
-  async abrirValvula() {
-    if (!this.electrovalvula) return;
+ async abrirValvula() {
+  if (!this.electrovalvula) return;
 
-    try {
-      const actualizado = await this.logRiegoService.updateApertura(
-        this.logsRiego[this.logsRiego.length - 1].logRiegoId, this.electrovalvula.electrovalvulaId, // log
-        1
-      );
-      console.log('Válvula abierta:', actualizado);
-      this.logsRiego.push(actualizado); // agregar al historial
-    } catch (err) {
-      console.error('Error al abrir válvula:', err);
-    }
+  const ultimoLog = this.logsRiego[this.logsRiego.length - 1];
+  if (!ultimoLog?.logRiegoId) {
+    console.warn('No hay log de riego disponible para abrir válvula');
+    return;
   }
 
-  //Cerrar electroválvula
-  async cerrarValvula() {
-    if (!this.electrovalvula) return;
-
-    try {
-      const actualizado = await this.logRiegoService.updateApertura(
-        this.logsRiego[this.logsRiego.length - 1].logRiegoId,this.electrovalvula.electrovalvulaId, // último log
-        0
-      );
-      console.log('Válvula cerrada:', actualizado);
-      this.logsRiego.push(actualizado); // agregar al historial
-    } catch (err) {
-      console.error('Error al cerrar válvula:', err);
-    }
+  try {
+    const actualizado = await this.logRiegoService.addLog(
+      this.electrovalvula.electrovalvulaId,
+      1
+    );
+    console.log('Válvula abierta:', actualizado);
+    this.logsRiego.push(actualizado);
+  } catch (err) {
+    console.error('Error al abrir válvula:', err);
   }
+}
+
+async cerrarValvula() {
+  if (!this.electrovalvula) return;
 
 
+  try {
+    const actualizado = await this.logRiegoService.addLog(
+      this.electrovalvula.electrovalvulaId,
+      0
+    );
+    console.log('Válvula cerrada:', actualizado);
+    this.logsRiego.push(actualizado);
+  } catch (err) {
+    console.error('Error al cerrar válvula:', err);
+  }
+}
+
+verMediciones(dispositivo: Dispositivo | any) {
+  
+  this.router.navigate(['/medicion/dispositivo', dispositivo.dispositivoId]);
+}
   }

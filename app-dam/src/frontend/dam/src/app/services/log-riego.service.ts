@@ -52,6 +52,26 @@ export class LogRiegoService {
     );
   }
 
+  // log-riego.service.ts
+addLog(electrovalvulaId: number, apertura: 0 | 1): Promise<LogRiego> {
+  const fechaSistema = new Date().toISOString();
+  return firstValueFrom(
+    this.http.post<{ status: number; data: LogRiego }>(
+      `${this.baseUrl}`,
+      {
+        electrovalvulaId,
+        apertura,
+        fecha: fechaSistema
+      }
+    ).pipe(
+      catchError(err => {
+        console.error('Error al crear log de riego', err);
+        return throwError(() => err);
+      }),
+      map(res => res.data)
+    )
+  );
+}
 
 }
 
