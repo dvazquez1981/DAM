@@ -121,7 +121,7 @@ CREATE TABLE `Usuario` (
   `name` varchar(30) NOT NULL,
   `password` varchar(256) NOT NULL,
   `descrip` varchar(30) DEFAULT NULL,
-  `lastLogin` datetime DEFAULT NULL
+  `lastLogin` datetime DEFAULT NULL,
   PRIMARY KEY (`userId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
