@@ -90,11 +90,12 @@ export class DispositivoPage implements OnInit {
  async abrirValvula() {
   if (!this.electrovalvula) return;
 
-  const ultimoLog = this.logsRiego[0];
+  /*const ultimoLog = this.logsRiego[0];
   if (!ultimoLog?.logRiegoId) {
     console.warn('No hay log de riego disponible para abrir válvula');
     return;
   }
+    */
 
   if (!this.dispositivo || !this.dispositivo.dispositivoId) {
   console.error('No hay dispositivo seleccionado');
@@ -130,9 +131,10 @@ async cerrarValvula() {
     );
     console.log('Válvula cerrada:', actualizado);
     this.logsRiego.unshift(actualizado);
-    this.valvulaAbierta = false;
+  
     
     this.detenerMedicionesContinuas() ;
+    this.valvulaAbierta = false;
 
 
   } catch (err) {
