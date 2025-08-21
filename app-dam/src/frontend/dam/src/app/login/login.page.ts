@@ -1,20 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { LoginService } from '../services/login.service';
+
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule],
 })
-export class LoginPage implements OnInit {
+export class LoginPage {
+  username = '';
+  password = '';
+  errorMessage = '';
 
-  constructor() { }
+  constructor(private authService: LoginService) {}
 
-  ngOnInit() {
+  async onLogin() {
+    try {
+      const result = await this.authService.login(this.username, this.password);
+      console.log('Login correcto:', result);
+      // acá podés guardar token en storage o navegar
+    } catch (err) {
+      console.error('Error en login', err);
+      this.errorMessage = 'Usuario o contraseña incorrectos';
+    }
   }
-
 }

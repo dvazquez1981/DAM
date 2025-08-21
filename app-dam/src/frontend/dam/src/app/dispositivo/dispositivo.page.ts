@@ -76,8 +76,8 @@ export class DispositivoPage implements OnInit {
         this.logsRiego = await this.logRiegoService.getLogs(electroId);
         if(this.logsRiego.length>0)
         {
-            let abierta=this.logsRiego[0].apertura
-             if(abierta)
+           this.valvulaAbierta=this.logsRiego[0].apertura==0?false:true;
+        if(this.valvulaAbierta)
                this.iniciarMedicionesContinuas()       
         }
         console.log('Logs de riego:', this.logsRiego);
