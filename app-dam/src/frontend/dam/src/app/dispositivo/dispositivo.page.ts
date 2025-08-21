@@ -41,7 +41,8 @@ export class DispositivoPage implements OnInit {
   electrovalvula: Electrovalvula = {} as Electrovalvula;
   logsRiego: LogRiego[] = [];
   ultimaMedicion: Medicion = {} as Medicion;
-
+  intervaloMediciones: any; // para setInterval
+  valvulaAbierta = false; 
 
   constructor(
     private route: ActivatedRoute,
@@ -50,7 +51,7 @@ export class DispositivoPage implements OnInit {
     private medicionService: MedicionService,
     private logRiegoService: LogRiegoService,
     private router: Router
-
+    
 
   ) {}
 
@@ -73,6 +74,12 @@ export class DispositivoPage implements OnInit {
         console.log('Última medición:', this.ultimaMedicion);
         //obtengo el log_riego
         this.logsRiego = await this.logRiegoService.getLogs(electroId);
+        if(this.logsRiego.length>0)
+        {
+            let abierta=this.logsRiego[0].apertura
+             if(abierta)
+               this.iniciarMedicionesContinuas()       
+        }
         console.log('Logs de riego:', this.logsRiego);
         }
       } catch (error) {
@@ -83,19 +90,30 @@ export class DispositivoPage implements OnInit {
  async abrirValvula() {
   if (!this.electrovalvula) return;
 
-  const ultimoLog = this.logsRiego[this.logsRiego.length - 1];
+  const ultimoLog = this.logsRiego[0];
   if (!ultimoLog?.logRiegoId) {
     console.warn('No hay log de riego disponible para abrir válvula');
     return;
   }
 
+  if (!this.dispositivo || !this.dispositivo.dispositivoId) {
+  console.error('No hay dispositivo seleccionado');
+  return;
+  }
+
+
+ 
+
   try {
-    const actualizado = await this.logRiegoService.addLog(
+      const actualizado = await this.logRiegoService.addLog(
       this.electrovalvula.electrovalvulaId,
       1
     );
     console.log('Válvula abierta:', actualizado);
-    this.logsRiego.push(actualizado);
+     this.logsRiego.unshift(actualizado);
+     this.valvulaAbierta = true;
+    this.iniciarMedicionesContinuas();
+ 
   } catch (err) {
     console.error('Error al abrir válvula:', err);
   }
@@ -111,14 +129,60 @@ async cerrarValvula() {
       0
     );
     console.log('Válvula cerrada:', actualizado);
-    this.logsRiego.push(actualizado);
+    this.logsRiego.unshift(actualizado);
+    this.valvulaAbierta = false;
+    
+    this.detenerMedicionesContinuas() ;
+
+
   } catch (err) {
     console.error('Error al cerrar válvula:', err);
   }
 }
 
+iniciarMedicionesContinuas() {
+  if (this.intervaloMediciones) return;
+
+  this.intervaloMediciones = setInterval(async () => {
+    const valor = parseFloat((Math.random() * 100).toFixed(2)).toString(); // ahora es número
+    const fecha = new Date();
+
+    const nuevaMedicion: Medicion = {
+      valor,
+      dispositivoId: this.dispositivo!.dispositivoId,
+      fecha
+    };
+
+    try {
+
+      await this.medicionService.guardarMedicion(nuevaMedicion);
+      this.ultimaMedicion=nuevaMedicion
+      console.log('Medición guardada:', nuevaMedicion);
+    } catch (error) {
+      console.error('Error guardando medición:', error);
+    }
+  }, 5000); // cada 5 segundos (puedes ajustar el intervalo)
+}
+
+
 verMediciones(dispositivo: Dispositivo | any) {
   
-  this.router.navigate(['/medicion/dispositivo', dispositivo.dispositivoId]);
+this.router.navigate(['/medicion/dispositivo', dispositivo.dispositivoId], {
+  queryParams: { valvulaAbierta: this.valvulaAbierta }
+});
+
+  console.log("valvula abierto" +this.valvulaAbierta)
+
+
 }
+
+
+detenerMedicionesContinuas() {
+  if (this.intervaloMediciones) {
+    clearInterval(this.intervaloMediciones);
+    this.intervaloMediciones = null;
+    console.log('Mediciones continuas detenidas');
+  }
+}
+
   }

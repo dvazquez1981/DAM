@@ -1,0 +1,107 @@
+.page-dispositivo {
+  padding: 1rem;
+  background: #f5f7fa;
+  font-family: 'Roboto', sans-serif;
+
+  ion-header {
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    color: white;
+    padding: 1rem;
+
+    ion-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-align: center;
+    }
+  }
+
+  ion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .card-dispositivo {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 1rem;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #27ae60;
+
+        &.off {
+          background: #e74c3c;
+        }
+      }
+
+      span {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #34495e;
+      }
+    }
+  }
+
+  .acciones {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+
+    ion-button {
+      flex: 1;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+
+      &.encender {
+        --background: #27ae60;
+        --background-hover: #2ecc71;
+      }
+
+      &.apagar {
+        --background: #e74c3c;
+        --background-hover: #c0392b;
+      }
+    }
+  }
+
+  .ultima-medicion {
+    background: #ecf9f6;
+    border: 1px solid #d1f2eb;
+    border-radius: 12px;
+    padding: 1rem;
+
+    h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: #16a085;
+    }
+
+    p {
+      font-size: 0.9rem;
+      margin: 0.2rem 0;
+      color: #2c3e50;
+    }
+  }
+}

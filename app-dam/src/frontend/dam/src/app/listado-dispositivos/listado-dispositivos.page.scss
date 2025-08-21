@@ -1,0 +1,33 @@
+ion-list {
+  padding: 8px;
+
+  ion-item {
+    margin-bottom: 8px;
+    border-radius: 12px;
+    --background: #f9f9f9;
+    --inner-padding-end: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+    ion-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      white-space: normal; // por si hay texto largo
+    }
+
+    ion-button {
+      --border-radius: 8px;
+      --padding-start: 8px;
+      --padding-end: 8px;
+      --color: #3880ff; // azul Ionic
+      font-size: 12px;
+    }
+
+    &:hover {
+      --background: #eef4ff;
+      transform: scale(1.01);
+      transition: 0.2s ease-in-out;
+    }
+  }
+}
+

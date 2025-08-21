@@ -6,7 +6,7 @@ import { map,catchError } from 'rxjs/operators';
 
 // Modelo de medición
 export interface Medicion {
-  medicionId: number;
+  medicionId?: number;
   valor:string;
   dispositivoId: number;
   fecha: Date;
@@ -45,6 +45,12 @@ getUltimaMedicion(dispositivoId: number): Promise<Medicion> {
     )
   );
 }
+
+    // Guardar una medición
+  guardarMedicion(medicion: { valor: string; dispositivoId: number; fecha: Date }): Promise<any> {
+    return firstValueFrom(this.http.post<any>(this.baseUrl, medicion));
+  }
+
 
   // Obtener mediciones filtradas por fecha
   getMedicionesPorFecha(dispositivoId: number, fechaInicio: string, fechaFin: string): Promise<Medicion[]> {

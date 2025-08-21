@@ -12,6 +12,7 @@ const {
     crearLog_Riego,
     deleteLog_Riego,
     updateLog_Riego,
+    getAllByElectrovalvulaId
 } = require('../controllers/Log_RiegoController.js');
 
 const router = express.Router();
@@ -22,6 +23,7 @@ router.get('/log_riego/:logRiegoId', sanitizeMiddlewareInput, /*ensureToken, che
 router.post('/log_riego', sanitizeMiddlewareInput,crearLog_Riego);
 router.delete('/log_riego/:logRiegoId', sanitizeMiddlewareInput, deleteLog_Riego);
 router.patch('/log_riego/:logRiegoId', sanitizeMiddlewareInput, updateLog_Riego);
+router.get('/log_riego/electrovalvula/:electrovalvulaId', sanitizeMiddlewareInput, /*ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getAllByElectrovalvulaId);
 
 
 module.exports = router;

@@ -158,7 +158,7 @@ async function getAllByDeviceId(req,res)
      console.log('Obtengo todas las mediciones del dispositivoId: '+numeroDispositivoId)
         try {
     
-            const DeviceFound = await Device.findOne({
+            const DeviceFound = await Dispositivo.findOne({
                 where: {
                     dispositivoId:numeroDispositivoId
                 }
@@ -176,7 +176,11 @@ async function getAllByDeviceId(req,res)
 
             console.log("dispositivoId: " + numeroDispositivoId + " encontrado ")
 
-            const me = await Medicion.find( {dispositivoId: numeroDispositivoId });
+            const me = await Medicion.findAll({
+              where: {
+                dispositivoId: numeroDispositivoId
+               }
+                  });
             if (me.length > 0) {
                 const sanitizedMeasurements = me.map(m => sanitize(JSON.parse(JSON.stringify(m))))
 
@@ -194,6 +198,48 @@ async function getAllByDeviceId(req,res)
     
     }
  }
+
+async function  getUltimaMedicionByDeviceID(req, res) {
+  const { dispositivoId } = req.params || {};
+
+  if (!dispositivoId) {
+    return res.status(400).json({ status: 0, message: 'dispositivoId es obligatorio' });
+  }
+
+  const numeroDispositivoId = Number(dispositivoId);
+  if (!Number.isInteger(numeroDispositivoId)) {
+    return res.status(400).json({
+      status: 0,
+      message: 'el valor de dispositivoId no es un número válido'
+    });
+  }
+
+  try {
+    const ultimaMedicion = await Medicion.findOne({
+      where: { dispositivoId: numeroDispositivoId },
+      order: [['medicionId', 'DESC']] // o [['createdAt', 'DESC']] si tenés timestamps
+    });
+
+    if (!ultimaMedicion) {
+      return res.status(404).json({
+        status: 0,
+        message: 'No se encontraron mediciones para este dispositivo.'
+      });
+    }
+
+    return res.status(200).json({
+      status: 1,
+      data: sanitize(ultimaMedicion)
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: 0,
+      message: 'Algo salió mal',
+      error: error.message
+    });
+  }
+}
 
 async function getOne(req, res) {
   const { medicionId } = req.params;
@@ -443,6 +489,7 @@ module.exports = {
   getAllByDeviceId,
   deleteMedicion,
   deleteMedicionByDeviceId,
+  getUltimaMedicionByDeviceID,
   updateMedicion
 
 };

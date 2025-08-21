@@ -20,6 +20,31 @@ async function getAll(req, res) {
   }
 }
 
+async function getAllByElectrovalvulaId(req, res) {
+  const {electrovalvulaId} = req.params;
+  
+  try {
+   const e = await Log_Riego.findAll({
+  where: { electrovalvulaId: electrovalvulaId },
+  order: [['fecha', 'DESC']],
+  limit: 20
+});
+
+    if (e) {
+      res.status(200).json(sanitize(e));
+    }
+    else {
+
+        console.log('No se encontraron Log_Riegos.')
+            res.status(404).json({ message: 'No se encontraron Log_Riego.' });
+        }
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+
 
 async function getOne(req, res) {
   const {logRiegoId} = req.params;
@@ -126,20 +151,7 @@ async function crearLog_Riego(req, res) {
       });
     }
 
-    const existingLog_Riego = await Log_Riego.findOne({
-     where: {
-        fecha: fecha,
-        electrovalvulaId: numeroElectrovalvulaId
-           }
-    });
-
-    if (existingLog_Riego) {
-      console.log('el log de riego, para esa fecha y electrovalvula ya existe.');
-      return res.status(409).json({
-        message: 'eel log de riego, para esa fecha y electrovalvula ya existe.',
-        status: 0,
-      });
-    }
+  
 
     const newLog_Riego = await Log_Riego.create({
       fecha: fecha,
@@ -311,7 +323,6 @@ async function updateLog_Riego(req, res) {
 
     await l.update({
       logRiegoId: numeroLogRiegoId,
-      nombre: nombre !== undefined ? nombre : l.nombre,
       fecha:fecha !== undefined ?   fecha:l.fecha,
       apertura:apertura !== undefined ?   apertura:l.apertura,
       electrovalvulaId:numeroElectrovalvulaId  !== undefined ?   numeroElectrovalvulaId:l.electrovalvulaId
@@ -335,5 +346,6 @@ module.exports = {
   getOne,
   crearLog_Riego,
   deleteLog_Riego,
-  updateLog_Riego
+  updateLog_Riego,
+  getAllByElectrovalvulaId,
 };

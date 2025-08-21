@@ -21,7 +21,7 @@ export class LogRiegoService {
 
   getLogs(electrovalvulaId: number): Promise<LogRiego[]> {
     return firstValueFrom(
-      this.http.get<LogRiego[]>(`${this.baseUrl}?electrovalvulaId=${electrovalvulaId}`).pipe(
+      this.http.get<LogRiego[]>(`${this.baseUrl}/electrovalvula/${electrovalvulaId}`).pipe(
         catchError(err => {
           console.error('Error al obtener logs de riego', err);
           return throwError(() => err);
