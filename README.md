@@ -187,12 +187,12 @@ La Sanitizacion de los los end points es tanto a la entrada como a la salida.
 - Archivo: src/backend/controllers/UsuarioController.js
 
 ### logger
-Logger (utils/logger.js):
-Tiempo real con Winston (archivo + consola).
-Timestamps en America/Argentina/Buenos_Aires.
-Archivos de log en src/backend/log/DAM.log.
-Consola estilo dev + JSON en producción.
-Morgan: middleware que agrega logging de requests HTTP.
+- Logger (utils/logger.js):
+- Tiempo real con Winston (archivo + consola).
+- Timestamps en America/Argentina/Buenos_Aires.
+- Archivos de log en src/backend/log/DAM.log.
+- Consola estilo dev + JSON en producción.
+- Morgan: middleware que agrega logging de requests HTTP.
 
 ### Conexión a base de datos (Sequelize)
 - Archivo: src/backend/bd/awdb.js 
@@ -207,27 +207,27 @@ Morgan: middleware que agrega logging de requests HTTP.
 
 
 ## Frontend
-el cliente web es una Single Page Application (SPA) desarrollada en Ionic con Angular, utilizando los componentes nativos de Ionic y TypeScript para la tipificación del código.
+El cliente web es una Single Page Application (SPA) desarrollada en Ionic con Angular, utilizando los componentes nativos de Ionic y TypeScript para la tipificación del código.
 
 Funcionalidades principales
 
-Login de usuario:
+- Login de usuario:
 Permite iniciar sesión para acceder a las funcionalidades de la app.
 
-Listado de dispositivos:
+- Listado de dispositivos:
 Visualiza todos los dispositivos registrados con información básica.
 
-Detalle de dispositivos:
+- Detalle de dispositivos:
 Al seleccionar un dispositivo, se muestra información completa incluyendo:
 Nombre, descripción y estado.
 
-Historial de logs de riego: fecha y estado de cada evento registrado.
+- Historial de logs de riego: fecha y estado de cada evento registrado.
 
-Prender o apagar electrovalvulas:
+- Prender o apagar electrovalvulas:
 Posibilidad de apagar y prender electrovalvulas directamente desde la interfaz.
 Simulación de mediciones asociadas al dispositivo.
 
-Ver todas las mediciones:
+- Ver todas las mediciones:
 Botón para consultar y visualizar el historial completo de mediciones de todos los dispositivos y en el caso que este prendida la
 electrovalvula se puede ver como se van actualizando.
 
