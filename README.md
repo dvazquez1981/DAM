@@ -27,7 +27,7 @@ MySQL 5.7 + PHPMyAdmin – Base de datos relacional.
 ```sh
 ├── db/  
 │   ├── dumps/  
-│   │   └── DAM.sql                # esquema inicial con tabla Devices  
+│   │   └── smart_home.sql                # esquema inicial con tabla Devices  
 │   └── data/                      # datos persistentes de MySQL  
 ├── src/  
 │   ├── backend/
