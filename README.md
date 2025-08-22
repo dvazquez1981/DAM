@@ -2,7 +2,7 @@
 
 # app-Ionic
 Web App Full Stack IoT usando Docker, Express, Sequelize, Ionic, Winston, MySQL y más.
-## Aplicaciones Web 2
+## Desarrollo de aplicaciones multiplataforma
 ### Entrega Final - Ing. Diego Vazquez
 
 ### Tecnologías principales
