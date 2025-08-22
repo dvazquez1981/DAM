@@ -180,11 +180,11 @@ Salvo el End point de login en usuario, todos los demas  utilizan para validar e
 La Sanitizacion de los los end points es tanto a la entrada como a la salida.
 
 ### Controladores:
-Archivo: src/backend/controllers/DeviceController.js
-Archivo: src/backend/controllers/MedicionController.js
-Archivo: src/backend/controllers/ElectrovalvulaController.js
-Archivo: src/backend/controllers/Log_riegoController.js
-Archivo: src/backend/controllers/UsuarioController.js
+- Archivo: src/backend/controllers/DeviceController.js
+- Archivo: src/backend/controllers/MedicionController.js
+- Archivo: src/backend/controllers/ElectrovalvulaController.js
+- Archivo: src/backend/controllers/Log_riegoController.js
+- Archivo: src/backend/controllers/UsuarioController.js
 
 ### logger
 Logger (utils/logger.js):
@@ -195,14 +195,14 @@ Consola estilo dev + JSON en producción.
 Morgan: middleware que agrega logging de requests HTTP.
 
 ### Conexión a base de datos (Sequelize)
-Archivo: src/backend/bd/awdb.js 
+- Archivo: src/backend/bd/awdb.js 
 
 ### Modelo Sequelize
-Archivo: src/backend/models/Device.js
-Archivo: src/backend/models/Medicion.js
-Archivo: src/backend/models/Electrovalvula.js
-Archivo: src/backend/models/Log_riego.js
-Archivo: src/backend/models/Usuario.js
+- Archivo: src/backend/models/Device.js
+- Archivo: src/backend/models/Medicion.js
+- Archivo: src/backend/models/Electrovalvula.js
+- Archivo: src/backend/models/Log_riego.js
+- Archivo: src/backend/models/Usuario.js
 
 
 
@@ -234,6 +234,26 @@ electrovalvula se puede ver como se van actualizando.
 
 ### Frontend - Vistas
 
+#### Login
+![login](doc/login.png)
+
+Para ingresar al sistema:  
+**Usuario:** `admin`  
+**Contraseña:** `admin`
+
+---
+
+#### Listado de dispositivos
+![ldispositivo](doc/listado_disp.png)
+
+---
+
+#### Detalle de dispositivo
+![dispositivo](doc/dispositivo.png)
+
+Al activar la electrovalvula, la simulación de mediciones empezará a actualizar la última medición.
+
+---
 
 #### Detalle de medición
 ![mediciones](doc/mediciones.png)
