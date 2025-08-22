@@ -10,7 +10,9 @@ import {
   IonItem,
   IonLabel,
   IonButton,
-  IonFooter
+  IonFooter,
+  IonBackButton,
+  IonButtons  
 } from '@ionic/angular/standalone';
 import { MedicionService, Medicion } from '../services/medicion.service';
 
@@ -29,14 +31,16 @@ import { MedicionService, Medicion } from '../services/medicion.service';
     IonItem,
     IonLabel,
     IonButton,
-    IonFooter
+    IonFooter,
+    IonBackButton,
+    IonButtons     // 👈 agregar aquí también
   ]
 })
 export class MedicionPage implements OnInit, OnDestroy {
 
   mediciones: Medicion[] = [];
-  intervaloMediciones?: any; // referencia para poder limpiar
-  valvulaAbierta?: boolean;   // estado de la válvula recibido desde la navegación
+  intervaloMediciones?: any;
+  valvulaAbierta?: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,44 +49,42 @@ export class MedicionPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Leer query params
     this.route.queryParams.subscribe(params => {
       this.valvulaAbierta = params['valvulaAbierta'] === 'true' || params['valvulaAbierta'] === '1';
       console.log('Válvula abierta?', this.valvulaAbierta);
     });
 
-    this.cargarMediciones(); // carga inicial
-    if(this.valvulaAbierta)
-         this.iniciarActualizacionMediciones(5000); // refresco cada 5 segundos
- 
+    this.cargarMediciones();
+
+    if (this.valvulaAbierta) {
+      this.iniciarActualizacionMediciones(5000);
+    }
   }
 
   ngOnDestroy() {
-    this.detenerActualizacionMediciones(); // limpiar interval
+    this.detenerActualizacionMediciones();
   }
 
-  // Cargar mediciones desde el servicio
   async cargarMediciones() {
     const id = Number(this.route.snapshot.paramMap.get('dispositivoId'));
     if (!id) return;
 
     try {
       const datos = await this.medicionService.getMediciones(id);
-      // ordenar de más reciente a más antiguo
-      this.mediciones = datos.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+      this.mediciones = datos.sort(
+        (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+      );
       console.log('Mediciones cargadas:', this.mediciones);
     } catch (error) {
       console.error('Error al cargar mediciones:', error);
     }
   }
 
-  // Iniciar actualización periódica
   iniciarActualizacionMediciones(intervaloMs: number = 5000) {
-    if (this.intervaloMediciones) return; // evitar múltiples intervalos
+    if (this.intervaloMediciones) return;
     this.intervaloMediciones = setInterval(() => this.cargarMediciones(), intervaloMs);
   }
 
-  // Detener actualización
   detenerActualizacionMediciones() {
     if (this.intervaloMediciones) {
       clearInterval(this.intervaloMediciones);

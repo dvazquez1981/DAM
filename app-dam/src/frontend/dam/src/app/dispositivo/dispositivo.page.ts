@@ -4,7 +4,8 @@ import {
   IonContent, IonHeader, IonTitle, IonToolbar, 
   IonCard, IonCardHeader, IonCardTitle, IonCardContent,
   IonList, IonItem, IonLabel,
-  IonButton 
+  IonButton,  IonBackButton,
+  IonButtons  
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
@@ -31,7 +32,9 @@ import { LogRiegoService, LogRiego } from '../services/log-riego.service';
     IonList,
     IonItem,
     IonLabel,
-    IonButton
+    IonButton,
+    IonBackButton,
+    IonButtons  
   ]
 })
 
