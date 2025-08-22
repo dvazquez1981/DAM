@@ -49,7 +49,7 @@ router.delete('/usuario/:userId' ,chequeoToken,  deleteUsuario);
   email,
   user_descrip
 */
-router.patch('/update/:userId',chequeoToken,  updateUsuario);
+router.patch('/usuario/:userId',chequeoToken,  updateUsuario);
 
 /** Exporto */
 module.exports = router;
