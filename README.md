@@ -94,12 +94,6 @@ git clone https://github.com/dvazquez1981/DAM.git
 ### Arrancá todo con Docker Compose:
 docker compose up 
 
-### Estructura de la DB
-Al iniciar el servicio de la base de datos, si esta no está creada toma el archivo que se encuentra en `db/dumps/smart_home.sql` para crear la base de datos automáticamente.
-En ese archivo está la configuración de la tabla `Devices` y otras configuraciones más. Si quisieras cambiar algunas configuraciones deberías modificar este archivo y crear nuevamente la base de datos para que se tomen en cuenta los cambios.
-Tené en cuenta que la base de datos se crea con permisos de superusuario por lo que no podrías borrar el directorio con tu usuario de sistema, para eso debés hacerlo con permisos de administrador. En ese caso podés ejecutar el comando `sudo rm -r db/data` para borrar el directorio completo.
-
-
 ### Accedé al frontend en:
 http://localhost:8100
 
@@ -112,7 +106,7 @@ Para el caso del servicio de NodeJS que se comunica con la DB fijate que en el a
 Si quisieras cambiar la contraseña, puertos, hostname u otras configuraciones de la DB deberías primero modificar el servicio de la DB en el archivo `docker-compose.yml` y luego actualizar las configuraciones para acceder desde PHPMyAdmin y el servicio de NodeJS.
 
 ### Estructura de la DB
-Al iniciar el servicio de la base de datos, por mas que este creada conviene tomar el archivo que se encuentra en `db/dumps/DAM.sql` y actualizar la base de datos en phpmyadmin.
+Al iniciar el servicio de la base de datos, por mas que este creada conviene tomar el archivo que se encuentra en `db/dumps/smart_home.sql` y actualizar la base de datos en phpmyadmin.
 En ese archivo está la configuración de la tabla `Devices`, `Mediciones`, `Electrovalvulas`, `Log_Riego` y  `Usuario` y otras configuraciones más. Si quisieras cambiar algunas configuraciones deberías modificar este archivo y crear nuevamente la base de datos para que se tomen en cuenta los cambios.
 
 Tené en cuenta que la base de datos se crea con permisos de superusuario por lo que no podrías borrar el directorio con tu usuario de sistema, para eso debés hacerlo con permisos de administrador. En ese caso podés ejecutar el comando `sudo rm -r db/data` para borrar el directorio completo.
@@ -257,7 +251,7 @@ Al activar la electrovalvula, la simulación de mediciones empezará a actualiza
 ![mediciones](doc/mediciones.png)
 
 
-En el caso este si esta activada la electrovalvula se actualizaran las mediciones con las simuladas
+En el caso este de que este activada la electrovalvula se actualizaran las mediciones con las simuladas
 
 
 
