@@ -5,6 +5,7 @@ const Usuario  = require('../models/Usuario.js');
 const jwt = require('jsonwebtoken');
 const moment= require('moment-timezone');
 const {sanitize}  = require('../utils/sanitize.js');
+const crypto = require('crypto');
 
 //URL del servidor central
 var JWT_SECRET = 'key_transito';
@@ -178,6 +179,7 @@ async function updateUsuario(req, res) {
 
 
     console.log(`usuario: ${name}`);
+    console.log(`password: ${password}`);
     console.log(`token: ${token}`);
     
     
@@ -225,7 +227,9 @@ async function updateUsuario(req, res) {
     } else {
         // Login con usuario y contraseña
         try {
-            const passMD5 = md5(password).toString();
+
+             
+            const passMD5 =  crypto.createHash('md5').update(password).digest('hex');
             const userFound = await Usuario.findOne({
                 where: {
                     name: name,
@@ -237,12 +241,20 @@ async function updateUsuario(req, res) {
                     'descrip'
                 ],
             });
-
+           // console.log(json(userFound))
             if (userFound) {
                 // Genera un nuevo token JWT y Actualizar lastLogin
                 
                 const newToken = jwt.sign({ userFound }, JWT_SECRET);
-                await userFound.update({ token: newToken, lastLogin: new Date() });
+                console.log(newToken)
+
+                await Usuario.update(
+                     { lastLogin: new Date() },
+                      { where: { name: userFound.name } }
+                            );
+
+                
+               
 
                 return res.status(200).json({
                     message: 'Login Success.',
@@ -316,60 +328,29 @@ async function crearUsuario(req, res)
 /*chequeo del token */
 async function chequeoToken(req,res,next){
 
-    try {
-        const token = req.headers['token'];
+    
+const bearerHeader = req.headers['token'];
 
-        if (!token) {
-            return res.status(401).json({ message: 'Token no proporcionado.' });
-        }
+    if (!bearerHeader) {
+  return res.status(401).json({ message: 'Token no proporcionado.' });
+}
 
+// Separar "Bearer" del token
+const token = bearerHeader.startsWith('Bearer ') ? bearerHeader.slice(7) : bearerHeader;
 
-        const decoded = jwt.verify(token, JWT_SECRET);
+console.log("Token en chequeo:", token);
 
-        // Buscar usuario asociado
-        const userFound = await Usuario.findOne({
-            where: { name: decoded.name }
-        });
+try {
+  const decoded = jwt.verify(token, JWT_SECRET);
+  req.user = decoded;
+  next();
+} catch (err) {
+  console.error("Error al verificar token:", err);
+  return res.status(403).json({ message: 'Token inválido.' });
+}
 
-        if (!userFound) {
-            return res.status(401).json({ message: 'Acceso denegado. Usuario no encontrado.' });
-        }
-
-        // Actualizar lastLogin
-        await userFound.update({ lastLogin: new Date() });
-
-        // Guardar en req.user si necesitás después
-        req.user = userFound;
-
-        next();
-    } catch (err) {
-        console.log("Error en chequeo token:", err.message);
-        return res.status(401).json({ message: 'Acceso denegado. Token inválido o error en servidor.' });
-    }
  }
  
-
- /** Verificacion token */
- async function ensureToken(req,res,next){
-     
-     const bearerHeader = req.headers['token'];
-   
-     if( typeof bearerHeader !== 'undefined' ){
- 
-         const bearer = bearerHeader.split(" ");
-         const bearerToken = bearer[1];
-         req.token = bearerToken;
-         next();
- 
-     }else {
- 
-         console.log("Error en ensureToken")
-         res.status(401).json({
-             message:'Token null error'
-         });
-     }
- }
-
 module.exports = {
   getAll,
   getOne,
@@ -377,7 +358,6 @@ module.exports = {
   updateUsuario,
   login,
   deleteUsuario,
-  chequeoToken,
-  ensureToken
-  
+  chequeoToken
+
 };

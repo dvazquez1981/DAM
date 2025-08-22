@@ -9,7 +9,7 @@ const router = express.Router();
 const  {  
     getAll,
     login,
-    ensureToken,
+
     chequeoToken,
     getOne,
     crearUsuario,
@@ -20,14 +20,14 @@ const  {
 /** Controladores */
 
 /** Obtener todos  los  usuarios */
-router.get('/usuario'/*,ensureToken,chequeoToken*/,getAll);
+router.get('/usuario',chequeoToken,getAll);
 
 /** loguearse */
-router.get('/usuario/login',login);
+router.post('/usuario/login',login);
 
 /** Obtener datos de un usuario */
 //name
-router.get('/usuario/:userId'/*, ensureToken,chequeoToken, chequeoGrupoUsuario('admin')*/,getOne);
+router.get('/usuario/:userId',chequeoToken,getOne);
 
 /** crear un usuario */
 //body:
@@ -35,11 +35,11 @@ router.get('/usuario/:userId'/*, ensureToken,chequeoToken, chequeoGrupoUsuario('
 //user_pass
 //grupo
 /** Crear un nuevo usuario */
-router.post('/usuario'/*, ensureToken, chequeoToken*/, crearUsuario);
+router.post('/usuario', chequeoToken, crearUsuario);
 
 /** borra usuario */
 //:user_name
-router.delete('/usuario/:userId'/*, ensureToken, chequeoToken*/ ,  deleteUsuario);
+router.delete('/usuario/:userId' ,chequeoToken,  deleteUsuario);
 
 /** update usuario */
 //user_name
@@ -49,7 +49,7 @@ router.delete('/usuario/:userId'/*, ensureToken, chequeoToken*/ ,  deleteUsuario
   email,
   user_descrip
 */
-router.patch('/update/:userId'/*, ensureToken, chequeoToken, chequeoGrupoUsuario('admin')*/,  updateUsuario);
+router.patch('/update/:userId',chequeoToken,  updateUsuario);
 
 /** Exporto */
 module.exports = router;

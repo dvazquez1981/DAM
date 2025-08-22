@@ -1,6 +1,8 @@
 const express = require('express');
 const {sanitizeMiddlewareInput}  = require('../utils/sanitize.js');
+const {
 
+    chequeoToken } =require('../controllers/UsuarioController.js')
 const {
     // ensureToken,
     // chequeoToken,
