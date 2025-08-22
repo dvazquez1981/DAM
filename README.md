@@ -114,7 +114,7 @@ Para el caso del servicio de NodeJS que se comunica con la DB fijate que en el a
 Si quisieras cambiar la contraseña, puertos, hostname u otras configuraciones de la DB deberías primero modificar el servicio de la DB en el archivo `docker-compose.yml` y luego actualizar las configuraciones para acceder desde PHPMyAdmin y el servicio de NodeJS.
 
 ### Estructura de la DB
-Al iniciar el servicio de la base de datos, si esta no está creada toma el archivo que se encuentra en `db/dumps/DAM.sql` para crear la base de datos automáticamente.
+Al iniciar el servicio de la base de datos, por mas que este creada conviene tomar el archivo que se encuentra en `db/dumps/DAM.sql` y actualizar la base de datos en phpmyadmin.
 En ese archivo está la configuración de la tabla `Devices`, `Mediciones`, `Electrovalvulas`, `Log_Riego` y  `Usuario` y otras configuraciones más. Si quisieras cambiar algunas configuraciones deberías modificar este archivo y crear nuevamente la base de datos para que se tomen en cuenta los cambios.
 
 Tené en cuenta que la base de datos se crea con permisos de superusuario por lo que no podrías borrar el directorio con tu usuario de sistema, para eso debés hacerlo con permisos de administrador. En ese caso podés ejecutar el comando `sudo rm -r db/data` para borrar el directorio completo.
@@ -122,18 +122,75 @@ Tené en cuenta que la base de datos se crea con permisos de superusuario por lo
 
 ## Backend
 
-### Controlador dispositivos: lógica CRUD usando Sequelize.
+### Rutas disponibles
 
-#### Rutas disponibles:
-GET /devices, GET /devices/:id
-POST /devices (JSON con { name, description, type, state }) (verifica duplicado por name)
-PATCH /devices/:id
-DELETE /devices/:id
+---
 
+### Device: lógica CRUD usando Sequelize
+- `GET /device` → devuelve todos los dispositivos  
+- `GET /device/:dispositivoId` → devuelve un dispositivo por ID (verifica que el ID sea numérico y que exista)  
+- `POST /device` → recibe JSON con `{ nombre, ubicacion, electrovalvulaId }`  
+  - valida que no exista duplicado por nombre  
+  - valida que `electrovalvulaId` sea numérico y exista  
+- `PATCH /device/:dispositivoId` → actualiza un dispositivo (verifica ID numérico y existencia, y lo mismo con `electrovalvulaId` si se actualiza)  
+- `DELETE /device/:dispositivoId` → elimina un dispositivo por ID (verifica ID numérico)  
+
+---
+
+### Medición: lógica CRUD usando Sequelize
+- `GET /medicion` → devuelve todas las mediciones  
+- `GET /medicion/:medicionId` → devuelve una medición específica por ID  
+- `GET /medicion/dispositivo/:dispositivoId` → devuelve las mediciones de un dispositivo (valida ID numérico y existencia del dispositivo)  
+- `GET /medicion/ultima/:dispositivoId` → devuelve la última medición de un dispositivo (misma validación)  
+- `POST /medicion` → recibe JSON con `{ valor, fecha, dispositivo }`  
+  - valida que exista el dispositivo  
+  - valida que no haya duplicado por `(fecha, dispositivo)`  
+- `PATCH /medicion/:medicionId` → actualiza una medición (verifica ID numérico y existencia, y si se actualiza dispositivo valida que exista)  
+- `DELETE /medicion/:medicionId` → elimina una medición (verifica ID numérico)  
+- `DELETE /medicion/dispositivo/:dispositivoId` → elimina todas las mediciones de un dispositivo (verifica ID numérico y existencia)  
+
+---
+
+### Log_Riego: lógica CRUD usando Sequelize
+- `GET /log_riego` → devuelve todos los logs de riego  
+- `GET /log_riego/:electrovalvulaId` → devuelve los logs de una electrovalvula (valida ID numérico y existencia)  
+- `POST /log_riego` → recibe JSON con `{ fecha, apertura, electrovalvulaId }`  
+  - valida duplicado por `(fecha, electrovalvulaId)`  
+  - valida que `electrovalvulaId` sea numérico y exista  
+- `PATCH /log_riego/:logRiegoId` → actualiza un log (valida ID numérico y existencia, y lo mismo con `electrovalvulaId` si se actualiza)  
+- `DELETE /log_riego/:logRiegoId` → elimina un log (valida ID numérico)  
+
+---
+
+### Usuario: lógica CRUD usando Sequelize
+- `GET /usuario` → devuelve todos los usuarios  
+- `GET /usuario/:userId` → devuelve un usuario por ID (valida que sea numérico y exista)  
+- `POST /usuario/login` → login con JSON `{ usuario, password }`  
+  - si es válido, devuelve token  
+  - también soporta login solo con token válido  
+- `POST /usuario` → recibe JSON con `{ usuario, password }`  
+  - valida duplicado por usuario  
+- `DELETE /usuario/:userId` → elimina un usuario (valida ID numérico)  
+
+
+### validacion token:
+Salvo el End point de login en usuario, todos los demas  utilizan para validar el token suministrado.
+
+### Sanitizacion:
+La Sanitizacion de los los end points es tanto a la entrada como a la salida.
+
+### Controladores:
+Archivo: src/backend/controllers/DeviceController.js
+Archivo: src/backend/controllers/MedicionController.js
+Archivo: src/backend/controllers/ElectrovalvulaController.js
+Archivo: src/backend/controllers/Log_riegoController.js
+Archivo: src/backend/controllers/UsuarioController.js
+
+### logger
 Logger (utils/logger.js):
 Tiempo real con Winston (archivo + consola).
 Timestamps en America/Argentina/Buenos_Aires.
-Archivos de log en src/backend/log/aw1.log.
+Archivos de log en src/backend/log/DAM.log.
 Consola estilo dev + JSON en producción.
 Morgan: middleware que agrega logging de requests HTTP.
 
@@ -142,6 +199,11 @@ Archivo: src/backend/bd/awdb.js
 
 ### Modelo Sequelize
 Archivo: src/backend/models/Device.js
+Archivo: src/backend/models/Medicion.js
+Archivo: src/backend/models/Electrovalvula.js
+Archivo: src/backend/models/Log_riego.js
+Archivo: src/backend/models/Usuario.js
+
 
 
 ## Frontend
@@ -170,334 +232,224 @@ Botón para consultar y visualizar el historial completo de mediciones de todos 
 electrovalvula se puede ver como se van actualizando.
 
 
-Esta es la vista del front:
+### Frontend - Vistas
 
-![Front](doc/webapp-example-1.png)
+
+#### Detalle de medición
+![mediciones](doc/mediciones.png)
+
+
+En el caso este si esta activada la electrovalvula se actualizaran las mediciones con las simuladas
 
 
 
 ## Log
-
-Ejemplo de log (consola y en aw1.log):
+Ejemplo de log (consola y en DAM.log):
 
 ```sh
-[2025-06-21 14:20:00] : NodeJS API running correctly
+[2025-06-21 14:20:00] : Servidor api rest esta corriendo
 [2025-06-21 14:20:01] : Conexión a MySQL OK.
 [2025-06-21 14:20:05] : Obtengo todos los dispositivos
 [2025-06-21 14:21:03] : Se encontró device con id=2
 ```
 
-## Detalles de implementación 💻
 
-En esta sección podés ver los detalles específicos de funcionamiento del código y que son los siguientes.
+# Detalles de implementación 💻
 
-## Obtener todos los dispositivos (getAll)
-### Frontend
-En el frontend, cuando se carga la página o se actualiza la lista de dispositivos, se realiza una solicitud HTTP para obtener todos los dispositivos existentes desde el backend.
+En esta sección se explican los detalles específicos de funcionamiento de cada recurso de la aplicación, tanto en el **frontend** como en el **backend**.  
 
-En el backend se utiliza el método get al endpoint:
-`http://localhost:8000/device`
+---
 
-### Backend
-En el backend, se usa la función getAll ubicada en src/backend/controllers/DevicesController.js.
+### 📌 Dispositivo (Device)
 
-Ruta:
-GET /devices
+#### Obtener todos los dispositivos (getAll)
 
-Proceso:
-- Se imprime en consola que se están obteniendo todos los dispositivos.
-- Se hace una consulta a la base de datos con Device.findAll() usando Sequelize.
-- Se sanitizan los datos usando sanitize() antes de enviarlos.
-- Se devuelve un JSON con código 200 OK y la lista de dispositivos.
+Frontend:  
+Cuando se carga la lista de dispositivos, se realiza un GET al backend.  
+GET http://localhost:8000/device
 
-Ejemplo de respuesta exitosa:
-```json
+Backend:  
+- Función: getAll → src/backend/controllers/DevicesController.js  
+- Ruta: GET /device  
+
+Proceso:  
+1. Log de acción (“Obtengo todos los dispositivos”).  
+2. Consulta Sequelize Device.findAll().  
+3. Sanitización de salida.  
+4. Devuelve 200 OK con array JSON.  
+
+Ejemplo respuesta:  
 [
-  {
-    "id": 1,
-    "name": "Luz cocina",
-    "description": "Luz principal de cocina",
-    "type": 0,
-    "state": 100
-  },
-  {
-    "id": 2,
-    "name": "Ventana baño",
-    "description": "Ventana con apertura automática",
-    "type": 1,
-    "state": 50
-  }
+  { "id": 1, "nombre": "Cocina", "ubicacion": "Cocina", "electrovalvulaId": 1 },
+  { "id": 2, "nombre": "Baño", "ubicacion": "Baño", "electrovalvulaId": 2 }
 ]
-```
 
-Errores posibles:
+Errores:  
+- 500 Internal Server Error.  
 
-#### Caso 500 Internal Server Error: si falla la consulta a la base de datos.
+---
 
+#### Obtener dispositivo por ID (getOne)
+GET http://localhost:8000/device/:id
 
-## Obtener un dispositivo por ID (getOne)
-### Frontend
-Desde el frontend, cuando se desea ver o editar un dispositivo específico, se realiza una solicitud al backend con el id del dispositivo seleccionado.
-`http://localhost:8000/device/${id}`
+Backend:  
+- Función: getOne  
+- Proceso: valida id, busca con findOne, responde con 200 OK, 404 Not Found o 500.  
 
-### Backend
-En el backend se usa la función getOne también en src/backend/controllers/DevicesController.js.
+Ejemplo éxito:  
+{ "id": 1, "nombre": "Cocina", "ubicacion": "Cocina", "electrovalvulaId": 1 }
 
-Ruta:
-GET /devices/:id
+Errores:  
+- 400 → id inválido.  
+- 404 → no existe.  
+- 500 → error inesperado.  
 
-Proceso:
+---
 
-- Se obtiene el parámetro id de la URL.
-- Se valida que el id esté presente.
-- Se busca el dispositivo en la base con Device.findOne({ where: { id } }).
-- Si se encuentra, se devuelve con código 200 OK.
-- Si no se encuentra, se devuelve 404 Not Found.
-- En caso de error, se devuelve 500 Internal Server Error.
-
-respuesta exitosa:
-```json
-{
-  "id": 1,
-  "name": "Luz cocina",
-  "description": "Luz principal de cocina",
-  "type": 0,
-  "state": 100
-}
-```
-Errores posibles:
-#### Caso 400 Bad Request: si no se pasa el id.
-```json
-
-{ "message": "id es obligatorio", "status": 0 }
-```
-
-
-#### Caso 404 Not Found: si no existe un dispositivo con ese id.
-
-```json
-{ "message": "No se encuentra el Device." }
-```
-
-#### Caso 500 Internal Server Error: error inesperado.
-```json
-{ "message": "Algo salió mal", "data": { "error": "detalle del error" } }
-
-```
+#### Crear dispositivo (create)
+POST http://localhost:8000/device
 
-
+Request:  
+{ "nombre": "Bomba agua", "ubicacion": "Jardín", "electrovalvulaId": 3 }
 
+Respuesta:  
+{ "message": "Device creado exitosamente", "data": { "id": 5, "nombre": "Bomba agua", "ubicacion": "Jardín", "electrovalvulaId": 3 } }
 
+Errores:  
+- 400 → campos inválidos.  
+- 409 → nombre duplicado.  
+- 404 → electrovalvulaId no existe.  
+- 500 → error inesperado.  
 
-## Agregar un dispositivo
+---
 
-### Frontend
+#### Actualizar dispositivo (update)
+PATCH http://localhost:8000/device/:id
 
-Para agregar un dispostivo se ingresa los valores de name, descripcion, el tipo en un select de tipo lampara y ventana y ademas el estado que es un porcentaje de 0 a 100 con un paso de 25
-Los campos se validarar para que no esten vacios en el front y tambien en el controlador del backend ademas se comprobara si hay duplicado con respecto al campo name cuando pega en el endpoint del backend como explico posteriormente
+#### Eliminar dispositivo (delete)
+DELETE http://localhost:8000/device/:id
 
-### Backend
-En el backend se utiliza el método POST al endpoint:
-`http://localhost:8000/device`
+---
 
-con el header:
-Content-Type: application/json
-
-El flujo completo es el siguiente: primero el servidor sanitiza la entrada, luego accede al controlador a la funcion crearDevice(req, res) donde verifica paso a paso:
-- Que los campos type y state sean numéricos.
-- Que state esté dentro del rango de porcentaje válido (0–100) 
-- Que type solo tome valores permitidos (0 o 1).
-- Que name y description no sean indefinidos ni estén vacíos.
-- Que no exista ya un dispositivo con el mismo name en la base de datos.
-
-Una vez superadas todas estas validaciones, se crea el registro y el endpoint devuelve un 201 Created.
-Formato de la solicitud (Request)
-
-Se envía en el body un JSON con los campos obligatorios:
-
-```json
-{
-  "name": "Luz cocina central",
-  "description": "Luz de la cocina",
-  "type": 0,
-  "state": 100
-}
-``` 
-
-- name (string): nombre único del dispositivo.
-- description (string): descripción del dispositivo.
-- type (integer): 0 o 1 (luz o ventana)
-- state (integer): si type = 0, 0 o 1; si type = 1, un valor entre 0 y 100.
-
+### 📌 Usuario  
 
-#### Caso que se haya creado con exito status 201
-```json
-{
-    "method": "post",
-    "request_headers": "application/json",
-    "response_code": 201,
-    "request_body": {
-        "devices": [
-            {
-                "message": "Device creado con éxito.",
-                "status": 1,
-                "data": {
-                    "id": 10,
-                    "name": "Kitchen Light",
-                    "description": "Luz de la cocina",
-                    "type": 0,
-                    "state": 100
-                }
-            }
-        ]
-    }
-}
-``` 
-#### Caso Bad Request (validación fallida) status 400
-```json
-{ "message": "state debe ser un porcentaje entre 0 y 100", "status": 0 }
-```
-
-```json
-{ "message": "el valor de type esta mal definido", "status": 0 }
-```
-
-```json
-{ "message": "name y description deben estar definidos",  "status": 0 }
-```
-
-#### Caso 409 Conflict (duplicado)
-```json
-{ "message": "El Device ya existe. Usa otro name.", "status": 0 }
-```
-
-#### Caso 500 Internal Server Error
-```json
-{ "message": "Error interno.", "status": 0, "error": "Detalle del error" }
-```
-
-## Actualizar un dispositivo
-
-### Frontend
-
-En el frontend, para actualizar un dispositivo, se muestran los campos existentes (name, description, type, state) en un formulario. El usuario puede modificar uno o varios valores y enviar la solicitud.
-La actualizacion tambien puede ser solo de state. En esta instancia se validara en el caso que se modifique el state que este entre 0 y 100; Y el type que sea 0 o 1.
-Esta misma validacion se hará tanto en front, como en el controlador del backend ademas de verificar que existe el id.
-
-se realiza un PATCH a:
-
-`http://localhost:8000/devices/:id`
-
-reemplazando :id por el identificador del dispositivo.
-
-### Backend
-Se utiliza PATCH al endpoint:
-`http://localhost:8000/devices/:id`
-con el header:
-Content-Type: application/json
-
-Formato de la solicitud (Request)
-```json
-{
-  "name": " Luz Cocina",
-  "description": "Luz de la cocina - actualizada",
-  "type": 1,
-  "state": 75
-}
-```
-o en el caso de solo modificar el state 
-
-```json
-{
-  "state": 75
-}
-```
-
-- name (string): nuevo nombre o el mismo.
-- description (string): nueva descripción.
-- type (integer): 0 o 1.
-- state (integer): 0–100.
-
-Proceso de validación y actualización
-- La función updateDevice(req, res) realiza:
-- Lectura e impresión de req.params.id y req.body.
-- Parseo de type y state a enteros.
-- Validaciones idénticas a crearDevice:
-- Rango de state.
-- Valores válidos de type.
-- name y description no vacíos.
-- Comprobación de existencia: verificar que el dispositivo con id exista.
-
-#### Caso 200 OK
-```json
-{
-  "message": "Device actualizado con éxito.",
-  "status": 1,
-  "data": {
-    "id": 10,
-    "name": "Nueva Luz Cocina",
-    "description": "Luz de la cocina - actualizada",
-    "type": 1,
-    "state": 75
-  }
-}
-```
-#### Caso 400 Bad Request (validación fallida)
-```json
-{ "message": "state debe ser un porcentaje entre 0 y 100", "status": 0 }
-```
-
-```json
-{ "message": "el valor de type esta mal definido", "status": 0 }
-```
-
-#### Caso 404 Not Found (no existe id)
-```json
-{ "message": "Device no encontrado.", "status": 0 }
-```
-
-#### Caso 500 Internal Server Error
-```json
-{ "message": "Error interno.", "status": 0, "error": "Detalle del error" }
-```
-
-
-
-
-## Eliminar un dispositivo
-
-### Frontend
-
-En el listado de dispositivos, cada elemento tiene un botón “Eliminar”. Al confirmarlo, se envía:
-
-DELETE `http://localhost:8000/devices/:id`
-
-reemplazando :id por el identificador del dispositivo.
-
-### Backend (deleteDevice)
-
-Endpoint:
-
-DELETE `http://localhost:8000/devices/:id`
-
-Header:
-
-Content-Type: application/json
-
-
-#### Caso 200 OK (eliminación exitosa):
-```json
-{ "message": "Device eliminado con éxito.", "status": 1 }
-```
-#### Caso 404 Not Found (no existe id):
-```json
-{ "message": "Device no encontrado.", "status": 0 }
-```
-#### Caso 500 Internal Server Error:
-```json
-{ "message": "Error interno.", "status": 0, "error": "Detalle del error" }
-```
+#### Login usuario
+POST http://localhost:8000/usuario/login
 
+Request:  
+{ "usuario": "admin", "password": "admin" }
+
+Respuesta (token):  
+{ "message": "Login correcto", "token": "eyJhbGciOi..." }
+
+Errores:  
+- 401 Unauthorized → credenciales inválidas.  
+- 500 → error inesperado.  
+
+---
+
+#### Obtener todos los usuarios
+GET http://localhost:8000/usuario
+
+Devuelve array de usuarios (sin passwords).  
+
+#### Crear usuario
+POST http://localhost:8000/usuario
+
+Request:  
+{ "usuario": "diego", "password": "1234" }
+
+Errores:  
+- 409 Conflict → usuario ya existe.  
+- 400 Bad Request → datos inválidos.  
+
+#### Eliminar usuario
+DELETE http://localhost:8000/usuario/:id
+
+---
+
+### 📌 Electrovalvula  
+
+#### Obtener todas
+GET http://localhost:8000/electrovalvula
+
+#### Obtener por ID
+GET http://localhost:8000/electrovalvula/:id
+
+#### Crear electrovalvula
+POST http://localhost:8000/electrovalvula
+
+Request:  
+{ "nombre": "Valvula patio", "estado": 0 }
+
+#### Actualizar
+PATCH http://localhost:8000/electrovalvula/:id
+
+#### Eliminar
+DELETE http://localhost:8000/electrovalvula/:id
+
+Errores comunes:  
+- 400 id inválido  
+- 404 no existe  
+- 409 duplicado  
+- 500 error interno  
+
+---
+
+### 📌 Log de Riego (Log_Riego)
+
+#### Obtener todos
+GET http://localhost:8000/log_riego
+
+#### Obtener por electrovalvulaId
+GET http://localhost:8000/log_riego/:electrovalvulaId
+
+#### Crear log
+POST http://localhost:8000/log_riego
+
+Request:  
+{ "fecha": "2025-08-22 13:00:00", "apertura": 1, "electrovalvulaId": 2 }
+
+Errores:  
+- 400 datos inválidos  
+- 409 duplicado fecha+electrovalvula  
+- 404 electrovalvula no existe  
+
+#### Actualizar / Eliminar
+PATCH http://localhost:8000/log_riego/:id  
+DELETE http://localhost:8000/log_riego/:id  
+
+---
+
+### 📌 Medición (Medicion)
+
+#### Obtener todas
+GET http://localhost:8000/medicion
+
+#### Obtener por ID
+GET http://localhost:8000/medicion/:id
+
+#### Obtener por dispositivo
+GET http://localhost:8000/medicion/dispositivo/:dispositivoId
+
+#### Última medición de un dispositivo
+GET http://localhost:8000/medicion/ultima/:dispositivoId
+
+#### Crear medición
+POST http://localhost:8000/medicion
+
+Request:  
+{ "valor": 55, "fecha": "2025-08-22 12:00:00", "dispositivo": 1 }
+
+Errores:  
+- 400 → campos inválidos  
+- 409 → ya existe medición para ese dispositivo y fecha  
+- 404 → dispositivo no existe  
+
+#### Actualizar / Eliminar
+PATCH http://localhost:8000/medicion/:id  
+DELETE http://localhost:8000/medicion/:id  
+DELETE http://localhost:8000/medicion/dispositivo/:dispositivoId
 
 
 
