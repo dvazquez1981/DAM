@@ -1,6 +1,4 @@
-<a href="https://www.gotoiot.com/">
-    <img src="doc/gotoiot-logo.png" alt="logo" title="Goto IoT" align="right" width="60" height="60" />
-</a>
+<a href="https://www.gotoiot.com/"> </a>
 
 # app-Ionic
 Web App Full Stack IoT usando Docker, Express, Sequelize, Ionic, Winston, MySQL y más.
