@@ -33,9 +33,17 @@ app.use(rutasElectrovalvula);
 app.use(rutasLog_Riego);
 app.use(rutasUsuario);
 
+// Ruta simple para comprobar el estado del servidor
+app.get('/', function(req, res) {
+    res.json({
+        "mensaje": "servidor api rest esta corriendo",
+        "status": "online",
+        "puerto": app.get('port')
+    });
+});
 
 app.listen(PORT, function(req, res) {
-    console.log("Aplicacion de NodeJS esta corriendo");
+    console.log("Servidor api rest esta corriendo");
 });
 
 //=======[ End of file ]=======================================================

@@ -2,7 +2,7 @@
     <img src="doc/gotoiot-logo.png" alt="logo" title="Goto IoT" align="right" width="60" height="60" />
 </a>
 
-# app-fullstack-base-2025-i11
+# app-Ionic
 Web App Full Stack IoT usando Docker, Express, Sequelize, Ionic, Winston, MySQL y más.
 ## Aplicaciones Web 2
 ### Entrega Final - Ing. Diego Vazquez
@@ -57,11 +57,13 @@ MySQL 5.7 + PHPMyAdmin – Base de datos relacional.
 │   │   │   └── awdb.js  
 │   │   ├── index.js               # arranque de Express + middlewares  
 │   └── frontend/  
-│       ├── ts/                    # TypeScript fuente  
-│       ├── js/                    # JavaScript compilado  
-│       ├── static/  
-│       │   ├── css/  
-│       │   └── img/  
+│       ├── login/                    
+│       ├── listado-dipositivos/                     
+│       ├── dispositivo/
+│       ├── electrovalvula/
+│       ├── medicion/
+│       ├── log-riego/
+│       ├── guards/
 │       └── index.html  
 └── docker-compose.yml  
 ```
@@ -88,7 +90,7 @@ Continua con la descarga del código cuando tengas las dependencias instaladas y
 
 ### Cloná el repositorio:
 ```
-git clone https://github.com/dvazquez1981/app-fullstack-base-2025-i11.git
+git clone https://github.com/dvazquez1981/DAM.git
 ```
 
 ### Arrancá todo con Docker Compose:
@@ -101,7 +103,7 @@ Tené en cuenta que la base de datos se crea con permisos de superusuario por lo
 
 
 ### Accedé al frontend en:
-http://localhost:8000 
+http://localhost:8100
 
 ### Accedé al PHPMyAdmin en: 
 http://localhost:8001 (credenciales root / userpass).
@@ -143,12 +145,35 @@ Archivo: src/backend/models/Device.js
 
 
 ## Frontend
-El cliente web es una Single Page Application con Materialize que se comunica con el servicio en NodeJS mediante JSON a través de requests HTTP, con formulario para:
-Crear dispositivos (Nombre, Descripción, Tipo, Estado en % de 0 a 100 con paso de 25%).
-Listar, editar, actualizar state, actualizar completamente y borrar dispositivos.
-Compilado desde TypeScript (src/frontend/ts) a JavaScript (src/frontend/js) usando contenedor Docker en tiempo real.
+el cliente web es una Single Page Application (SPA) desarrollada en Ionic con Angular, utilizando los componentes nativos de Ionic y TypeScript para la tipificación del código.
+
+Funcionalidades principales
+
+Login de usuario:
+Permite iniciar sesión para acceder a las funcionalidades de la app.
+
+Listado de dispositivos:
+Visualiza todos los dispositivos registrados con información básica.
+
+Detalle de dispositivos:
+Al seleccionar un dispositivo, se muestra información completa incluyendo:
+Nombre, descripción y estado.
+
+Historial de logs de riego: fecha y estado de cada evento registrado.
+
+Prender o apagar electrovalvulas:
+Posibilidad de apagar y prender electrovalvulas directamente desde la interfaz.
+Simulación de mediciones asociadas al dispositivo.
+
+Ver todas las mediciones:
+Botón para consultar y visualizar el historial completo de mediciones de todos los dispositivos y en el caso que este prendida la
+electrovalvula se puede ver como se van actualizando.
+
+
 Esta es la vista del front:
+
 ![Front](doc/webapp-example-1.png)
+
 
 
 ## Log

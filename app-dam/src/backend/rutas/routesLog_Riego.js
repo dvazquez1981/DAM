@@ -6,9 +6,7 @@ const {
 
     chequeoToken } =require('../controllers/UsuarioController.js')
 const {
-    // ensureToken,
-    // chequeoToken,
-    // chequeoGrupoUsuario,
+   
     getAll,
     getOne,
     crearLog_Riego,
@@ -20,12 +18,12 @@ const {
 const router = express.Router();
 
 // APIs
-router.get('/log_riego',/* ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getAll);
-router.get('/log_riego/:logRiegoId', sanitizeMiddlewareInput, /*ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getOne);
-router.post('/log_riego', sanitizeMiddlewareInput,crearLog_Riego);
-router.delete('/log_riego/:logRiegoId', sanitizeMiddlewareInput, deleteLog_Riego);
-router.patch('/log_riego/:logRiegoId', sanitizeMiddlewareInput, updateLog_Riego);
-router.get('/log_riego/electrovalvula/:electrovalvulaId', sanitizeMiddlewareInput, /*ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getAllByElectrovalvulaId);
+router.get('/log_riego', chequeoToken, getAll);
+router.get('/log_riego/:logRiegoId', sanitizeMiddlewareInput, chequeoToken, getOne);
+router.post('/log_riego', sanitizeMiddlewareInput, chequeoToken,crearLog_Riego);
+router.delete('/log_riego/:logRiegoId', sanitizeMiddlewareInput, chequeoToken,deleteLog_Riego);
+router.patch('/log_riego/:logRiegoId', sanitizeMiddlewareInput, chequeoToken, updateLog_Riego);
+router.get('/log_riego/electrovalvula/:electrovalvulaId', sanitizeMiddlewareInput, chequeoToken, getAllByElectrovalvulaId);
 
 
 module.exports = router;

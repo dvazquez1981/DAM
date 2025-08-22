@@ -4,9 +4,7 @@ const {
 
     chequeoToken } =require('../controllers/UsuarioController.js')
 const {
-    // ensureToken,
-    // chequeoToken,
-    // chequeoGrupoUsuario,
+   
    getAll,
   getOne,
   createMedicion,
@@ -21,18 +19,18 @@ const {
 const router = express.Router();
 
 // APIs
-router.get('/medicion',/* ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getAll);
-router.get('/medicion/:medicionId', sanitizeMiddlewareInput, /*ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getOne);
-router.get('/medicion/dispositivo/:dispositivoId', sanitizeMiddlewareInput, /*ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getAllByDeviceId);
+router.get('/medicion', chequeoToken,getAll);
+router.get('/medicion/:medicionId', sanitizeMiddlewareInput, chequeoToken, getOne);
+router.get('/medicion/dispositivo/:dispositivoId', sanitizeMiddlewareInput, chequeoToken, getAllByDeviceId);
 
-router.get('/medicion/ultima/:dispositivoId', sanitizeMiddlewareInput, /*ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getUltimaMedicionByDeviceID);
+router.get('/medicion/ultima/:dispositivoId', sanitizeMiddlewareInput, chequeoToken, getUltimaMedicionByDeviceID);
 
 
-router.post('/medicion', sanitizeMiddlewareInput,createMedicion);
-router.delete('/medicion/:medicionId', sanitizeMiddlewareInput, deleteMedicion);
-router.delete('/medicion/dispositivo/:dispositivoId', sanitizeMiddlewareInput, deleteMedicionByDeviceId);
+router.post('/medicion', sanitizeMiddlewareInput, chequeoToken,createMedicion);
+router.delete('/medicion/:medicionId', sanitizeMiddlewareInput, chequeoToken, deleteMedicion);
+router.delete('/medicion/dispositivo/:dispositivoId', sanitizeMiddlewareInput, chequeoToken,deleteMedicionByDeviceId);
 
-router.patch('/medicion/:medicionId', sanitizeMiddlewareInput, updateMedicion);
+router.patch('/medicion/:medicionId', sanitizeMiddlewareInput, chequeoToken, updateMedicion);
 
 
 

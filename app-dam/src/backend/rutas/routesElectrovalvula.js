@@ -6,9 +6,7 @@ const {
 
     chequeoToken } =require('../controllers/UsuarioController.js')
 const {
-    // ensureToken,
-    // chequeoToken,
-    // chequeoGrupoUsuario,
+  
     getAll,
     getOne,
     crearElectrovalvula,
@@ -19,11 +17,11 @@ const {
 const router = express.Router();
 
 // APIs
-router.get('/electrovalvula',/* ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getAll);
-router.get('/electrovalvula/:electrovalvulaId', sanitizeMiddlewareInput, /*ensureToken, chequeoToken, chequeoGrupoUsuario('admin'),*/ getOne);
-router.post('/electrovalvula', sanitizeMiddlewareInput,crearElectrovalvula);
-router.delete('/electrovalvula/:electrovalvulaId', sanitizeMiddlewareInput, deleteElectrovalvula);
-router.patch('/electrovalvula/:electrovalvulaId', sanitizeMiddlewareInput, updateElectrovalvula);
+router.get('/electrovalvula', chequeoToken, getAll);
+router.get('/electrovalvula/:electrovalvulaId', sanitizeMiddlewareInput, chequeoToken, getOne);
+router.post('/electrovalvula', sanitizeMiddlewareInput, chequeoToken,crearElectrovalvula);
+router.delete('/electrovalvula/:electrovalvulaId', sanitizeMiddlewareInput, chequeoToken, deleteElectrovalvula);
+router.patch('/electrovalvula/:electrovalvulaId', sanitizeMiddlewareInput, chequeoToken, updateElectrovalvula);
 
 
 module.exports = router;

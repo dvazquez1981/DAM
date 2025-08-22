@@ -9,7 +9,7 @@ const {
     // chequeoGrupoUsuario,
 const {
 
-    // chequeoGrupoUsuario,
+  
     getAll,
     getOne,
     crearDevice,
