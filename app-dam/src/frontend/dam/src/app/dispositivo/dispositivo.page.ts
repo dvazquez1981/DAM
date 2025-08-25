@@ -100,7 +100,6 @@ export class DispositivoPage implements OnInit {
   }
     */
 
-
   if (!this.dispositivo || !this.dispositivo.dispositivoId) {
   console.error('No hay dispositivo seleccionado');
   return;
@@ -167,7 +166,7 @@ iniciarMedicionesContinuas() {
     } catch (error) {
       console.error('Error guardando medición:', error);
     }
-  }, 5000); // cada 5 segundos (puedes ajustar el intervalo)
+  }, 10000); // cada 10 segundos (puedes ajustar el intervalo)
 }
 
 
