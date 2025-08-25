@@ -1,19 +1,21 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-       <ion-back-button defaultHref="/listado-dispositivos"></ion-back-button>    </ion-buttons>
+      <ion-back-button defaultHref="/listado-dispositivos"></ion-back-button>
+    </ion-buttons>
     <ion-title>Mediciones</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list>
-    <ion-item *ngIf="!mediciones || mediciones.length === 0">
-      Cargando mediciones...
-    </ion-item>
 
+  <!-- Lista de mediciones solo si hay elementos -->
+  <ion-list *ngIf="mediciones.length > 0">
     <ion-item *ngFor="let medicion of mediciones">
       {{ medicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }} - Valor: {{ medicion.valor }}
     </ion-item>
   </ion-list>
+
+  <!-- No mostramos nada si mediciones está vacío -->
+
 </ion-content>

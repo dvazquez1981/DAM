@@ -100,6 +100,7 @@ export class DispositivoPage implements OnInit {
   }
     */
 
+
   if (!this.dispositivo || !this.dispositivo.dispositivoId) {
   console.error('No hay dispositivo seleccionado');
   return;
