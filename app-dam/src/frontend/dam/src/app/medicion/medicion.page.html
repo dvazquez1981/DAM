@@ -1,21 +1,19 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/listado-dispositivos"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Mediciones</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
 
-<ion-content [fullscreen]="true">
-
-  <!-- Lista de mediciones solo si hay elementos -->
-  <ion-list *ngIf="mediciones.length > 0">
-    <ion-item *ngFor="let medicion of mediciones">
-      {{ medicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }} - Valor: {{ medicion.valor }}
-    </ion-item>
-  </ion-list>
-
-  <!-- No mostramos nada si mediciones está vacío -->
+  @if (mediciones.length > 0) {
+    <ion-list>
+      @for (medicion of mediciones; track medicion) {
+        <ion-item [resaltar]="+medicion.valor"> 
+          {{ medicion.fecha | date:'yyyy-MM-dd HH:mm:ss' }} 
+          - Valor: {{ +medicion.valor | unidad:'°C' }}
+        </ion-item>
+        
+      }
+    </ion-list>
+  } @else {
+    <ion-text color="medium">
+      <p class="ion-text-center">No hay mediciones disponibles.</p>
+    </ion-text>
+  }
 
 </ion-content>

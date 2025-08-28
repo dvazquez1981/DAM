@@ -1,6 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgIf, NgFor,CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UnidadPipe } from '../pipes/unidad.pipe';
+import { ResaltarDirective } from '../directives/resaltar.directive';
+
+
 import {
   IonContent,
   IonHeader,
@@ -12,7 +16,8 @@ import {
   IonButton,
   IonFooter,
   IonBackButton,
-  IonButtons  
+  IonButtons,
+  IonText  
 } from '@ionic/angular/standalone';
 import { MedicionService, Medicion } from '../services/medicion.service';
 
@@ -22,7 +27,12 @@ import { MedicionService, Medicion } from '../services/medicion.service';
   styleUrls: ['./medicion.page.scss'],
   standalone: true,
   imports: [
+
+    UnidadPipe,
+    ResaltarDirective,
     CommonModule,
+    NgIf,        
+    NgFor,        
     IonContent,
     IonHeader,
     IonTitle,
@@ -33,7 +43,8 @@ import { MedicionService, Medicion } from '../services/medicion.service';
     IonButton,
     IonFooter,
     IonBackButton,
-    IonButtons     // 👈 agregar aquí también
+    IonButtons,
+    IonText
   ]
 })
 export class MedicionPage implements OnInit, OnDestroy {
