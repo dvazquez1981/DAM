@@ -1,3 +1,14 @@
+<ion-header [translucent]="true">
+
+  <ion-toolbar>
+    <ion-buttons slot="start">
+       <ion-back-button defaultHref="/listado-dispositivos"></ion-back-button>    </ion-buttons>
+        <ion-title>Detalle mediciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+
 <ion-content [fullscreen]="true" class="ion-padding">
 
   @if (mediciones.length > 0) {
